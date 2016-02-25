@@ -1,0 +1,5 @@
+.idea
+apache-tomcat/logs/
+apache-tomcat/temp/
+apache-tomcat/tomcat.pid
+apache-tomcat/webapps/pleak/WEB-INF/classes/

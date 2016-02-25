@@ -1,0 +1,31 @@
+<web-app>
+  <servlet>
+    <servlet-name>bpmn-fileslist</servlet-name>
+    <servlet-class>com.naples.servlets.BpmnFilesList</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>bpmn-fileslist</servlet-name>
+    <url-pattern>/list</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>bpmn-file-save</servlet-name>
+    <servlet-class>com.naples.servlets.BpmnFileSave</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>bpmn-file-save</servlet-name>
+    <url-pattern>/save</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>bpmn-file-open</servlet-name>
+    <servlet-class>com.naples.servlets.BpmnFileOpen</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>bpmn-file-open</servlet-name>
+    <url-pattern>/open</url-pattern>
+  </servlet-mapping>
+  <context-param>
+    <description>Path to saved files.</description>
+    <param-name>bpmn-files-dir</param-name>
+    <param-value>./temp/</param-value>
+  </context-param>
+</web-app>
