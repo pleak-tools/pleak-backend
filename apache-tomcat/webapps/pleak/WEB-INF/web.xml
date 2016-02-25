@@ -26,6 +26,6 @@
   <context-param>
     <description>Path to saved files.</description>
     <param-name>bpmn-files-dir</param-name>
-    <param-value>./temp/</param-value>
+    <param-value>./files/</param-value>
   </context-param>
 </web-app>
