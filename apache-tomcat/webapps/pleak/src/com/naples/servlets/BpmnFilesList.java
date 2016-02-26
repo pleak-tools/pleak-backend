@@ -16,18 +16,18 @@ public class BpmnFilesList extends HttpServlet{
      String pathStr = getServletContext().getRealPath(getServletContext().getInitParameter("bpmn-files-dir"));
      Path filesPath = Paths.get(pathStr);
 
-     String files = "[";
+     String files = "{files: [";
      try (DirectoryStream<Path> stream = Files.newDirectoryStream(filesPath, "*.bpmn")) {
          for (Path entry: stream) {
              files = files + "'" + entry.getFileName() + "', ";
          }
      } catch (DirectoryIteratorException ex) {
-         throw ex.getCause();
+//         throw ex.getCause();
      }
-     if (!files.equals("[")) {
+     if (!files.equals("{files: [")) {
          files = files.substring(0, files.length() - 2);
      }
-     files = files + "]";
+     files = files + "]}";
 
      resp.setContentType("application/json");
      resp.setCharacterEncoding("UTF-8");
