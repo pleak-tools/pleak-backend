@@ -33,6 +33,8 @@ public class BpmnFileOpen extends HttpServlet{
 
       if (Files.isReadable(filePath)) {
         response.setResponseText(200, new String(Files.readAllBytes(filePath)));
+      } else {
+        response.setResponseError(404, "File not found.");
       }
 
     }
@@ -44,6 +46,6 @@ public class BpmnFileOpen extends HttpServlet{
     resp.setCharacterEncoding("UTF-8");
     resp.getWriter().write(response.toJson());
 
- }
+  }
 
 }
