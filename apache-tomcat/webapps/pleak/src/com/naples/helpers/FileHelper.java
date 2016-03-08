@@ -6,12 +6,15 @@ import java.util.regex.Pattern;
 public class FileHelper {
 
   public boolean isCorrectFileName(String fileName) {
-    String WHITELIST = "[^0-9A-Za-z.]+";
+    String WHITELIST = "[^0-9A-Za-z.\\-_]+";
+    String BEGINNING = "^[^\\.]";
 
-    Pattern p = Pattern.compile(WHITELIST);
-    Matcher m = p.matcher(fileName);
+    Pattern pw = Pattern.compile(WHITELIST);
+    Pattern pb = Pattern.compile(BEGINNING);
+    Matcher mw = pw.matcher(fileName);
+    Matcher mb = pb.matcher(fileName);
 
-    return !m.find();
+    return !mw.find() && mb.find();
   }
 
   public boolean isCorrectFileExtension(String fileName) {
