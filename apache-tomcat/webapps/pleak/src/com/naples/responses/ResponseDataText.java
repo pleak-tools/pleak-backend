@@ -4,14 +4,14 @@ import com.naples.responses.ResponseData;
 
 public class ResponseDataText extends ResponseData {
 
-    public String text;
+  public String text;
 
-    protected String getText() {
-        return text;
-    }
+  protected String getText() {
+    return text;
+  }
 
-    protected void setText(String text) {
-        this.text = text;
-    }
+  protected void setText(String text) {
+    this.text = text;
+  }
 
 }

@@ -6,13 +6,13 @@ import java.util.List;
 import com.naples.responses.ResponseData;
 
 public class ResponseDataList extends ResponseData {
-    public List<String> list = new ArrayList<>();
+  public List<String> list = new ArrayList<>();
 
-    protected void setList(List<String> list) {
-        this.list = list;
-    }
+  protected void setList(List<String> list) {
+    this.list = list;
+  }
 
-    protected List<String> getList() {
-        return list;
-    }
+  protected List<String> getList() {
+    return list;
+  }
 }
