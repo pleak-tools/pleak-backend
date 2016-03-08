@@ -28,6 +28,8 @@ Different types of results have the following structure:
   }
 }
 ```
+Used in:
+* /pleak/save (success)
 
 ### Text
 ```
@@ -39,6 +41,11 @@ Different types of results have the following structure:
   }
 }
 ```
+Used in:
+* /pleak/open (success)
+* /pleak/open (error)
+* /pleak/save (error)
+* /pleak/list (error)
 
 ### TextDescription
 ```
@@ -62,6 +69,8 @@ Different types of results have the following structure:
   }
 }
 ```
+Used in:
+* /pleak/list
 
 ## License
 
