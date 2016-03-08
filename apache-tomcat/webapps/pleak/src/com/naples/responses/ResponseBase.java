@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.naples.responses.ResponseData;
 
 public class ResponseBase {
+
   public String type;
   public ResponseData data;
 

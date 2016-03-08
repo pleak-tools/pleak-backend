@@ -27,7 +27,7 @@ public class BpmnFilesList extends HttpServlet{
       for (Path entry: stream) {
         files.add(entry.getFileName().toString());
       }
-      response.setResponseFiles(200, files);
+      response.setResponseList(200, files);
     } catch (Exception ex) {
 //         throw ex.getCause();
       response.setResponseError(400, ex.getMessage());

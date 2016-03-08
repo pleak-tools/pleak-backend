@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.naples.responses.Response;
 import com.naples.responses.ResponseData;
 import com.naples.responses.ResponseDataText;
-import com.naples.responses.ResponseDataFiles;
+import com.naples.responses.ResponseDataList;
 
 public class Response {
 
@@ -21,7 +21,7 @@ public class Response {
     response.setData(success);
   }
 
-  public void setResponseSuccess(Integer code, String text) {
+  public void setResponseText(Integer code, String text) {
     response = new ResponseBase();
     response.setType("success");
 
@@ -31,13 +31,24 @@ public class Response {
     response.setData(success);
   }
 
-  public void setResponseFiles(Integer code, List<String> files) {
+  public void setResponseTextDescription(Integer code, String text, String description) {
     response = new ResponseBase();
     response.setType("success");
 
-    ResponseDataFiles success = new ResponseDataFiles();
+    ResponseDataTextDescription success = new ResponseDataTextDescription();
     success.setCode(code);
-    success.setFiles(files);
+    success.setText(text);
+    success.setDescription(description);
+    response.setData(success);
+  }
+
+  public void setResponseList(Integer code, List<String> list) {
+    response = new ResponseBase();
+    response.setType("success");
+
+    ResponseDataList success = new ResponseDataList();
+    success.setCode(code);
+    success.setList(list);
     response.setData(success);
   }
 
@@ -53,7 +64,7 @@ public class Response {
 
   public void setResponseError(Integer code, String text, String description) {
     setResponseError(code, text);
-    ResponseDataText responseData = (ResponseDataText) response.getData();
+    ResponseDataTextDescription responseData = (ResponseDataTextDescription) response.getData();
     responseData.setDescription(description);
   }
 

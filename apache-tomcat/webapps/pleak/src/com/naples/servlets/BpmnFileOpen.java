@@ -32,7 +32,7 @@ public class BpmnFileOpen extends HttpServlet{
       Path filePath = Paths.get(filePathStr);
 
       if (Files.isReadable(filePath)) {
-        response.setResponseSuccess(200, new String(Files.readAllBytes(filePath)));
+        response.setResponseText(200, new String(Files.readAllBytes(filePath)));
       }
 
     }
