@@ -6,9 +6,7 @@ Requests get JSON messages as results with the following base structure:
 ```
 {
   type: "",
-  data: {
-    code: 0
-  }
+  code: 0
 }
 ```
 There are currently these types:
@@ -23,9 +21,7 @@ Different types of results have the following structure:
 ```
 {
   type: "",
-  data: {
-    code: 0
-  }
+  code: 0
 }
 ```
 Used in:
@@ -35,10 +31,8 @@ Used in:
 ```
 {
   type: "",
-  data: {
-    code: 0,
-    text: ""
-  }
+  code: 0,
+  text: ""
 }
 ```
 Used in:
@@ -51,11 +45,9 @@ Used in:
 ```
 {
   type: "",
-  data: {
-    code: 0,
-    text: "",
-    description: ""
-  }
+  code: 0,
+  text: "",
+  description: ""
 }
 ```
 Currently not used.
@@ -64,10 +56,8 @@ Currently not used.
 ```
 {
   type: "",
-  data: {
-    code: 0,
-    list: []
-  }
+  code: 0,
+  list: []
 }
 ```
 Used in:
