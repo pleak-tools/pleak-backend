@@ -75,9 +75,13 @@ public class Response {
       ObjectMapper mapper = new ObjectMapper();
       jsonResponse = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response);
     } catch (Exception e) {
-      jsonResponse = "{" +
-                       "\n\terror: '" + e.getMessage() + "'" +
-                     "}";
+      jsonResponse =  "{\n" +
+                      "  type: 'error',\n" +
+                      "  content: {\n" +
+                      "    code: 400,\n" +
+                      "    text: '" + e.getMessage() + "'\n" +
+                      "  }\n" +
+                      "}";
     }
 
     return jsonResponse;
