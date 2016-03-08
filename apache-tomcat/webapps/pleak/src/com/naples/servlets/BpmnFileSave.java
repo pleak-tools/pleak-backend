@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.naples.responses.JsonResponse;
+import com.naples.responses.Response;
 import com.naples.helpers.FileException;
 import com.naples.helpers.FileHelper;
 
@@ -23,9 +23,7 @@ public class BpmnFileSave extends HttpServlet{
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
               throws ServletException, IOException {
 
-    String result;
-
-    JsonResponse jsonResponse = new JsonResponse();
+    Response response = new Response();
     FileHelper fh = new FileHelper();
 
     String fileName = req.getParameter("fileName");
@@ -42,15 +40,16 @@ public class BpmnFileSave extends HttpServlet{
       Path filePath = Paths.get(filePathStr);
 
       Files.copy(fileContent, filePath, StandardCopyOption.REPLACE_EXISTING);
-      result = jsonResponse.getJsonResponseSuccess(200, "OK");
+      response.setResponseSuccess(200);
+
     }
     catch (Exception e) {
-      result = jsonResponse.getJsonResponseError(400, e.getMessage());
+      response.setResponseError(400, e.getMessage());
     }
 
     resp.setContentType("application/json");
     resp.setCharacterEncoding("UTF-8");
-    resp.getWriter().write(result);
+    resp.getWriter().write(response.toJson());
   }
 
 }

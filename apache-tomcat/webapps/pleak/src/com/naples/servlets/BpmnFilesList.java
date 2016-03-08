@@ -2,10 +2,14 @@ package com.naples.servlets;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.naples.responses.Response;
 
 public class BpmnFilesList extends HttpServlet{
 
@@ -13,26 +17,26 @@ public class BpmnFilesList extends HttpServlet{
  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
                   throws ServletException, IOException {
 
-     String pathStr = getServletContext().getRealPath(getServletContext().getInitParameter("bpmn-files-dir"));
-     Path filesPath = Paths.get(pathStr);
+    Response response = new Response();
 
-     String files = "{\"files\": [";
-     try (DirectoryStream<Path> stream = Files.newDirectoryStream(filesPath, "*.bpmn")) {
-         for (Path entry: stream) {
-             files = files + "\"" + entry.getFileName() + "\", ";
-         }
-     } catch (DirectoryIteratorException ex) {
+    String pathStr = getServletContext().getRealPath(getServletContext().getInitParameter("bpmn-files-dir"));
+    Path filesPath = Paths.get(pathStr);
+
+    List<String> files = new ArrayList<>();
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(filesPath, "*.bpmn")) {
+      for (Path entry: stream) {
+        files.add(entry.getFileName().toString());
+      }
+      response.setResponseFiles(200, files);
+    } catch (Exception ex) {
 //         throw ex.getCause();
-     }
-     if (!files.equals("{\"files\": [")) {
-         files = files.substring(0, files.length() - 2);
-     }
-     files = files + "]}";
+      response.setResponseError(400, ex.getMessage());
+    }
 
-     resp.setContentType("application/json");
-     resp.setCharacterEncoding("UTF-8");
-     resp.getWriter().write(files);
+    resp.setContentType("application/json");
+    resp.setCharacterEncoding("UTF-8");
+    resp.getWriter().write(response.toJson());
 
- }
+  }
 
 }

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.naples.responses.JsonResponse;
+import com.naples.responses.Response;
 import com.naples.helpers.FileException;
 import com.naples.helpers.FileHelper;
 
@@ -18,9 +18,7 @@ public class BpmnFileOpen extends HttpServlet{
  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
                   throws ServletException, IOException {
 
-    String result = "";
-
-    JsonResponse jsonResponse = new JsonResponse();
+    Response response = new Response();
     FileHelper fh = new FileHelper();
 
     String fileName = req.getParameter("fileName");
@@ -34,17 +32,17 @@ public class BpmnFileOpen extends HttpServlet{
       Path filePath = Paths.get(filePathStr);
 
       if (Files.isReadable(filePath)) {
-        result = new String(Files.readAllBytes(filePath));
+        response.setResponseSuccess(200, new String(Files.readAllBytes(filePath)));
       }
 
     }
     catch (Exception e) {
-      result = jsonResponse.getJsonResponseError(400, e.getMessage());
+      response.setResponseError(400, e.getMessage());
     }
 
     resp.setContentType("application/json");
     resp.setCharacterEncoding("UTF-8");
-    resp.getWriter().write(result);
+    resp.getWriter().write(response.toJson());
 
  }
 
