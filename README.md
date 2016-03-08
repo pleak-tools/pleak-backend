@@ -5,7 +5,7 @@ The services powering Privacy Leak Tools
 Requests get JSON messages as results with the following base structure:
 ```
 {
-  type: ""
+  type: "",
   data: {
     code: 0
   }
@@ -22,7 +22,7 @@ Different types of results have the following structure:
 ### Default
 ```
 {
-  type: ""
+  type: "",
   data: {
     code: 0
   }
@@ -34,7 +34,7 @@ Used in:
 ### Text
 ```
 {
-  type: ""
+  type: "",
   data: {
     code: 0,
     text: ""
@@ -50,7 +50,7 @@ Used in:
 ### TextDescription
 ```
 {
-  type: ""
+  type: "",
   data: {
     code: 0,
     text: "",
@@ -58,11 +58,12 @@ Used in:
   }
 }
 ```
+Currently not used.
 
 ### List
 ```
 {
-  type: ""
+  type: "",
   data: {
     code: 0,
     list: []
