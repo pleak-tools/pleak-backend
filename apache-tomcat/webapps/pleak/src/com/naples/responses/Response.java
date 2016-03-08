@@ -3,10 +3,10 @@ package com.naples.responses;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.naples.responses.Response;
-import com.naples.responses.ResponseData;
-import com.naples.responses.ResponseDataText;
-import com.naples.responses.ResponseDataList;
+import com.naples.responses.ResponseBase;
+import com.naples.responses.ResponseText;
+import com.naples.responses.ResponseTextDescription;
+import com.naples.responses.ResponseList;
 
 public class Response {
 
@@ -15,57 +15,44 @@ public class Response {
   public void setResponseSuccess(Integer code) {
     response = new ResponseBase();
     response.setType("success");
-
-    ResponseData success = new ResponseData();
-    success.setCode(code);
-    response.setData(success);
+    response.setCode(code);
   }
 
   public void setResponseText(Integer code, String text) {
-    response = new ResponseBase();
+    response = new ResponseText();
     response.setType("success");
-
-    ResponseDataText success = new ResponseDataText();
-    success.setCode(code);
-    success.setText(text);
-    response.setData(success);
+    response.setCode(code);
+    ((ResponseText)response).setText(text);
   }
 
   public void setResponseTextDescription(Integer code, String text, String description) {
-    response = new ResponseBase();
+    response = new ResponseTextDescription();
     response.setType("success");
-
-    ResponseDataTextDescription success = new ResponseDataTextDescription();
-    success.setCode(code);
-    success.setText(text);
-    success.setDescription(description);
-    response.setData(success);
+    response.setCode(code);
+    ((ResponseTextDescription)response).setText(text);
+    ((ResponseTextDescription)response).setDescription(description);
   }
 
   public void setResponseList(Integer code, List<String> list) {
-    response = new ResponseBase();
+    response = new ResponseList();
     response.setType("success");
-
-    ResponseDataList success = new ResponseDataList();
-    success.setCode(code);
-    success.setList(list);
-    response.setData(success);
+    ((ResponseList)response).setCode(code);
+    ((ResponseList)response).setList(list);
   }
 
   public void setResponseError(Integer code, String text) {
-    response = new ResponseBase();
+    response = new ResponseText();
     response.setType("error");
-
-    ResponseDataText error = new ResponseDataText();
-    error.setCode(code);
-    error.setText(text);
-    response.setData(error);
+    response.setCode(code);
+    ((ResponseText)response).setText(text);
   }
 
   public void setResponseError(Integer code, String text, String description) {
-    setResponseError(code, text);
-    ResponseDataTextDescription responseData = (ResponseDataTextDescription) response.getData();
-    responseData.setDescription(description);
+    response = new ResponseTextDescription();
+    response.setType("error");
+    response.setCode(code);
+    ((ResponseTextDescription)response).setText(text);
+    ((ResponseTextDescription)response).setDescription(description);
   }
 
   public String toJson() {

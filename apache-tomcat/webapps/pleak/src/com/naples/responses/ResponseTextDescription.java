@@ -1,8 +1,8 @@
 package com.naples.responses;
 
-import com.naples.responses.ResponseData;
+import com.naples.responses.ResponseText;
 
-public class ResponseDataTextDescription extends ResponseDataText {
+public class ResponseTextDescription extends ResponseText {
 
   public String description;
 
