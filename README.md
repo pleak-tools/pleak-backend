@@ -71,7 +71,7 @@ Currently not used.
 }
 ```
 Used in:
-* /pleak/list
+* /pleak/list (success)
 
 ## License
 
