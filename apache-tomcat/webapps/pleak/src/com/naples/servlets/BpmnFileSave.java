@@ -61,7 +61,7 @@ public class BpmnFileSave extends HttpServlet{
   }
 
   protected boolean isCorrectFileExtension(String fileName) {
-    String CORRECT_FILE_EXTENSION = "\\.bpmn";
+    String CORRECT_FILE_EXTENSION = "\\.bpmn$";
 
     Pattern p = Pattern.compile(CORRECT_FILE_EXTENSION);
     Matcher m = p.matcher(fileName);
