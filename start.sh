@@ -8,6 +8,7 @@ echo "Compiling..." &&
 javac -classpath $CATALINA_BASE/lib/servlet-api.jar:$WEB_APP_LIB/*: \
       -d         $CATALINA_BASE/webapps/pleak/WEB-INF/classes/ \
                  $CATALINA_BASE/webapps/pleak/src/com/naples/servlets/*.java \
+                 $CATALINA_BASE/webapps/pleak/src/com/naples/helpers/*.java \
                  $CATALINA_BASE/webapps/pleak/src/com/naples/responses/*.java &&
 
 echo "Starting..." &&

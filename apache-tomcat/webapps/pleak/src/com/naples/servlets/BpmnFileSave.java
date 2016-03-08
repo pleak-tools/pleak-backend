@@ -8,13 +8,14 @@ import javax.servlet.http.Part;
 import java.io.InputStream;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.naples.responses.JsonResponse;
+import com.naples.helpers.FileException;
+import com.naples.helpers.FileHelper;
 
 public class BpmnFileSave extends HttpServlet{
 
@@ -25,13 +26,14 @@ public class BpmnFileSave extends HttpServlet{
     String result;
 
     JsonResponse jsonResponse = new JsonResponse();
+    FileHelper fh = new FileHelper();
 
     String fileName = req.getParameter("fileName");
 
     try {
 
-      if ( !isCorrectFileName(fileName) ) throw new FileException("Incorrect file name.");
-      if ( !isCorrectFileExtension(fileName) ) throw new FileException("Incorrect file extension.");
+      if ( !fh.isCorrectFileName(fileName) ) throw new FileException("Incorrect file name.");
+      if ( !fh.isCorrectFileExtension(fileName) ) throw new FileException("Incorrect file extension.");
 
       Part filePart = req.getPart("file");
       InputStream fileContent = filePart.getInputStream();
@@ -51,31 +53,4 @@ public class BpmnFileSave extends HttpServlet{
     resp.getWriter().write(result);
   }
 
-  protected boolean isCorrectFileName(String fileName) {
-    String WHITELIST = "[^0-9A-Za-z.]+";
-
-    Pattern p = Pattern.compile(WHITELIST);
-    Matcher m = p.matcher(fileName);
-
-    return !m.find();
-  }
-
-  protected boolean isCorrectFileExtension(String fileName) {
-    String CORRECT_FILE_EXTENSION = "\\.bpmn$";
-
-    Pattern p = Pattern.compile(CORRECT_FILE_EXTENSION);
-    Matcher m = p.matcher(fileName);
-
-    return m.find();
-  }
-}
-
-class FileException extends Exception
-{
-  public FileException() {}
-
-  public FileException(String message)
-  {
-    super(message);
-  }
 }
