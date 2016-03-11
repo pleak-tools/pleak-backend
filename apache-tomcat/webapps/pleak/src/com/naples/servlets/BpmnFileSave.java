@@ -40,11 +40,12 @@ public class BpmnFileSave extends HttpServlet{
       Path filePath = Paths.get(filePathStr);
 
       Files.copy(fileContent, filePath, StandardCopyOption.REPLACE_EXISTING);
-      response.setResponseSuccess(200);
-
+      response.setResponseSuccess();
+      resp.setStatus(HttpServletResponse.SC_OK);
     }
     catch (Exception e) {
-      response.setResponseError(400, e.getMessage());
+      response.setResponseError(e.getMessage());
+      resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     resp.setContentType("application/json");

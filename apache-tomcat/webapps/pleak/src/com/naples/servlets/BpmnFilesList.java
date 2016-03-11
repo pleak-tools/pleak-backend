@@ -27,10 +27,12 @@ public class BpmnFilesList extends HttpServlet{
       for (Path entry: stream) {
         files.add(entry.getFileName().toString());
       }
-      response.setResponseList(200, files);
+      response.setResponseList(files);
+      resp.setStatus(HttpServletResponse.SC_OK);
     } catch (Exception ex) {
 //         throw ex.getCause();
-      response.setResponseError(400, ex.getMessage());
+      response.setResponseError(ex.getMessage());
+      resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     resp.setContentType("application/json");

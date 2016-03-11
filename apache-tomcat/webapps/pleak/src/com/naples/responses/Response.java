@@ -12,45 +12,39 @@ public class Response {
 
   protected ResponseBase response;
 
-  public void setResponseSuccess(Integer code) {
+  public void setResponseSuccess() {
     response = new ResponseBase();
     response.setType("success");
-    response.setCode(code);
   }
 
-  public void setResponseText(Integer code, String text) {
+  public void setResponseText(String text) {
     response = new ResponseText();
     response.setType("success");
-    response.setCode(code);
     ((ResponseText)response).setText(text);
   }
 
-  public void setResponseTextDescription(Integer code, String text, String description) {
+  public void setResponseTextDescription(String text, String description) {
     response = new ResponseTextDescription();
     response.setType("success");
-    response.setCode(code);
     ((ResponseTextDescription)response).setText(text);
     ((ResponseTextDescription)response).setDescription(description);
   }
 
-  public void setResponseList(Integer code, List<String> list) {
+  public void setResponseList(List<String> list) {
     response = new ResponseList();
     response.setType("success");
-    ((ResponseList)response).setCode(code);
     ((ResponseList)response).setList(list);
   }
 
-  public void setResponseError(Integer code, String text) {
+  public void setResponseError(String text) {
     response = new ResponseText();
     response.setType("error");
-    response.setCode(code);
     ((ResponseText)response).setText(text);
   }
 
-  public void setResponseError(Integer code, String text, String description) {
+  public void setResponseError(String text, String description) {
     response = new ResponseTextDescription();
     response.setType("error");
-    response.setCode(code);
     ((ResponseTextDescription)response).setText(text);
     ((ResponseTextDescription)response).setDescription(description);
   }
@@ -64,10 +58,7 @@ public class Response {
     } catch (Exception e) {
       jsonResponse =  "{\n" +
                       "  type: 'error',\n" +
-                      "  content: {\n" +
-                      "    code: 400,\n" +
-                      "    text: '" + e.getMessage() + "'\n" +
-                      "  }\n" +
+                      "  text: '" + e.getMessage() + "'\n" +
                       "}";
     }
 

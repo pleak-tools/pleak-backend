@@ -32,14 +32,17 @@ public class BpmnFileOpen extends HttpServlet{
       Path filePath = Paths.get(filePathStr);
 
       if (Files.isReadable(filePath)) {
-        response.setResponseText(200, new String(Files.readAllBytes(filePath)));
+        response.setResponseText(new String(Files.readAllBytes(filePath)));
+        resp.setStatus(HttpServletResponse.SC_OK);
       } else {
-        response.setResponseError(404, "File not found.");
+        response.setResponseError("File not found.");
+        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
       }
 
     }
     catch (Exception e) {
-      response.setResponseError(400, e.getMessage());
+      response.setResponseError(e.getMessage());
+      resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     resp.setContentType("application/json");
