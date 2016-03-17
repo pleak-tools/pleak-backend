@@ -5,9 +5,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import java.io.InputStream;
 import java.io.IOException;
-import java.nio.file.*;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -27,19 +25,15 @@ public class BpmnFileSave extends HttpServlet{
     FileHelper fh = new FileHelper();
 
     String fileName = req.getParameter("fileName");
+    Part filePart = req.getPart("file");
 
     try {
-
       if ( !fh.isCorrectFileName(fileName) ) throw new FileException("Incorrect file name.");
       if ( !fh.isCorrectFileExtension(fileName) ) throw new FileException("Incorrect file extension.");
 
-      Part filePart = req.getPart("file");
-      InputStream fileContent = filePart.getInputStream();
-
       String filePathStr = getServletContext().getRealPath(getServletContext().getInitParameter("bpmn-files-dir")) + fileName;
-      Path filePath = Paths.get(filePathStr);
+      fh.saveFile(filePart, filePathStr);
 
-      Files.copy(fileContent, filePath, StandardCopyOption.REPLACE_EXISTING);
       response.setResponseSuccess();
       resp.setStatus(HttpServletResponse.SC_OK);
     }
