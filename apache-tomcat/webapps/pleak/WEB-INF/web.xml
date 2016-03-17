@@ -23,6 +23,14 @@
     <servlet-name>bpmn-file-open</servlet-name>
     <url-pattern>/open</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>bpmn-file-delete</servlet-name>
+    <servlet-class>com.naples.servlets.BpmnFileDelete</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>bpmn-file-delete</servlet-name>
+    <url-pattern>/delete</url-pattern>
+  </servlet-mapping>
   <context-param>
     <description>Path to saved files.</description>
     <param-name>bpmn-files-dir</param-name>
