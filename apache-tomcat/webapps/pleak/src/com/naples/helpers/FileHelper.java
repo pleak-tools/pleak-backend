@@ -2,8 +2,12 @@ package com.naples.helpers;
 
 import javax.servlet.http.Part;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.nio.file.*;
 import java.util.Collections;
 import java.util.ArrayList;
@@ -59,21 +63,26 @@ public class FileHelper {
   }
 
   public List<String> getFileModifiedDates(List<Path> filePaths) throws IOException {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     List<String> fileModifiedDates = new ArrayList<>();
 
     for (Path entry: filePaths) {
-      fileModifiedDates.add(sdf.format(entry.toFile().lastModified()).toString());
+      fileModifiedDates.add(getFileLastModifiedString(entry));
     }
 
     return fileModifiedDates;
   }
 
-  public void saveFile(Part filePart, String filePathStr) throws IOException {
+  public void saveFile(Part filePart, String fileMD5, String filePathStr) throws FileException, NoSuchAlgorithmException, IOException {
     InputStream fileContent = filePart.getInputStream();
 
-    Path filePath = Paths.get(filePathStr);
+    try {
+      String curFileMD5 = getMD5Hash(filePathStr);
+      if (!curFileMD5.equals(fileMD5)) throw new FileException("File content changed.", 409);
+    } catch (FileNotFoundException ex) {
+      // File doesn't exist but it's okay
+    }
 
+    Path filePath = Paths.get(filePathStr);
     Files.copy(fileContent, filePath, StandardCopyOption.REPLACE_EXISTING);
   }
 
@@ -93,6 +102,32 @@ public class FileHelper {
     }
 
     return false;
+  }
+
+  public String getFileLastModifiedString(Path filePath) {
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    return sdf.format(filePath.toFile().lastModified()).toString();
+  }
+
+  // http://www.mkyong.com/java/java-md5-hashing-example/
+  public String getMD5Hash(String filePathStr) throws NoSuchAlgorithmException, IOException {
+    MessageDigest md = MessageDigest.getInstance("MD5");
+    FileInputStream fis = new FileInputStream(filePathStr);
+
+    byte[] dataBytes = new byte[1024];
+
+    int nread = 0;
+    while ((nread = fis.read(dataBytes)) != -1) {
+      md.update(dataBytes, 0, nread);
+    };
+    byte[] mdbytes = md.digest();
+
+    StringBuffer sb = new StringBuffer();
+    for (int i = 0; i < mdbytes.length; i++) {
+      sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+    }
+
+    return sb.toString();
   }
 
 }

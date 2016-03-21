@@ -7,6 +7,7 @@ import com.naples.responses.ResponseBase;
 import com.naples.responses.ResponseText;
 import com.naples.responses.ResponseTextDescription;
 import com.naples.responses.ResponseList;
+import com.naples.responses.ResponseFile;
 import com.naples.responses.ResponseFiles;
 
 public class Response {
@@ -35,6 +36,14 @@ public class Response {
     response = new ResponseList();
     response.setType("success");
     ((ResponseList)response).setList(list);
+  }
+
+  public void setResponseFile(String content, String lastModified, String md5) {
+    response = new ResponseFile();
+    response.setType("success");
+    ((ResponseFile)response).setContent(content);
+    ((ResponseFile)response).setLastModified(lastModified);
+    ((ResponseFile)response).setMD5(md5);
   }
 
   public void setResponseFiles(List<String> fileNames, List<String> fileModifiedDates) {

@@ -32,7 +32,10 @@ public class BpmnFileOpen extends HttpServlet{
       Path filePath = Paths.get(filePathStr);
 
       if (Files.isReadable(filePath)) {
-        response.setResponseText(new String(Files.readAllBytes(filePath)));
+        String fileContent = new String(Files.readAllBytes(filePath));
+        String fileLastModified = fh.getFileLastModifiedString(filePath);
+        String fileMD5 = fh.getMD5Hash(filePathStr);
+        response.setResponseFile(fileContent, fileLastModified, fileMD5);
         resp.setStatus(HttpServletResponse.SC_OK);
       } else {
         response.setResponseError("File not found.");

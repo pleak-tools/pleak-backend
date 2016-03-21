@@ -25,6 +25,7 @@ public class BpmnFileSave extends HttpServlet{
     FileHelper fh = new FileHelper();
 
     String fileName = req.getParameter("fileName");
+    String fileMD5 = req.getParameter("fileMD5");
     Part filePart = req.getPart("file");
 
     try {
@@ -32,13 +33,22 @@ public class BpmnFileSave extends HttpServlet{
       if ( !fh.isCorrectFileExtension(fileName) ) throw new FileException("Incorrect file extension.");
 
       String filePathStr = getServletContext().getRealPath(getServletContext().getInitParameter("bpmn-files-dir")) + fileName;
-      fh.saveFile(filePart, filePathStr);
+      fh.saveFile(filePart, fileMD5, filePathStr);
+      fileMD5 = fh.getMD5Hash(filePathStr);
 
-      response.setResponseSuccess();
+      response.setResponseText(fileMD5);
       resp.setStatus(HttpServletResponse.SC_OK);
     }
+    catch (FileException e) {
+      response.setResponseError(e.toString());
+      if (e.getCode() == 409) {
+        resp.setStatus(HttpServletResponse.SC_CONFLICT);
+      } else {
+        resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      }
+    }
     catch (Exception e) {
-      response.setResponseError(e.getMessage());
+      response.setResponseError(e.toString());
       resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 
