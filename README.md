@@ -1,68 +1,44 @@
-# pleak-backend
-The services powering Privacy Leak Tools
+# Welcome
+This is a new and improved repository for pleak-backend that uses:
+- [Maven](https://maven.apache.org/)
+- [Tomcat](http://tomcat.apache.org/)
+- [Jersey](https://jersey.java.net/)
+- [MySQL](https://www.mysql.com/)
+- [Hibernate](http://hibernate.org/)
+- [JSON Web Tokens](https://jwt.io/)
 
-## JSON messages
-Requests get JSON messages as results with the following base structure:
-```
-{
-  type: "",
-  code: 0
-}
-```
-There are currently these types:
-* success
-* error
+## Requirements
+- Java 1.8
+- Maven 3.0+
+- MySQL 5.5+```
 
-Codes are regular HTTP status codes.
+## Install Maven
+```sudo apt-get install maven```
 
-Different types of results have the following structure:
+## Navigate to the project root directory
 
-### Default
-```
-{
-  type: "",
-  code: 0
-}
-```
-Used in:
-* /pleak/save (success)
+## Setup database
+```mysql -u root -p < src/main/resources/db/setup.sql```
 
-### Text
-```
-{
-  type: "",
-  code: 0,
-  text: ""
-}
-```
-Used in:
-* /pleak/open (success)
-* /pleak/open (error)
-* /pleak/save (error)
-* /pleak/list (error)
+## Migrate database
+```mvn flyway:migrate```
 
-### TextDescription
-```
-{
-  type: "",
-  code: 0,
-  text: "",
-  description: ""
-}
-```
-Currently not used.
+## Build application and start tomcat
+```mvn tomcat:run```
 
-### List
-```
-{
-  type: "",
-  code: 0,
-  list: []
-}
-```
-Used in:
-* /pleak/list (success)
+## Clean database
+```mvn flyway:clean```
 
-## License
+## API
 
-MIT
+### All files
+```GET /rest/file```
+
+### File
+```GET /rest/file/{id}```
+
+### Save
+```POST /rest/file```
+
+### Delete
+```DELETE /rest/file/{id}```
