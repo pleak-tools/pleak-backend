@@ -32,13 +32,13 @@ This is a new and improved repository for pleak-backend that uses:
 ## API
 
 ### All files
-```GET /rest/file```
+```GET /rest/files```
 
 ### File
-```GET /rest/file/{id}```
+```GET /rest/files/{id}```
 
 ### Save
-```POST /rest/file```
+```POST /rest/files```
 
 ### Delete
-```DELETE /rest/file/{id}```
+```DELETE /rest/files/{id}```

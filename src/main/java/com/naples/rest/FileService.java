@@ -29,7 +29,7 @@ import com.naples.helper.Success;
 import com.naples.helper.FileHelper;
 import com.naples.helper.FileException;
 
-@Path("/file")
+@Path("/files")
 public class FileService {
 
     @Context

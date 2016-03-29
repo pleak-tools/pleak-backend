@@ -1,0 +1,10 @@
+com/naples/helper/FileHelper.class
+com/naples/file/File.class
+com/naples/file/Files.class
+com/naples/rest/FileService.class
+com/naples/filter/AuthFilter.class
+com/naples/helper/FileException.class
+com/naples/filter/CORSFilter.class
+com/naples/helper/Success.class
+com/naples/util/HibernateUtil.class
+com/naples/helper/Error.class
