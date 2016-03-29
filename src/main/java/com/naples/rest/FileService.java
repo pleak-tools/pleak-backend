@@ -54,11 +54,13 @@ public class FileService {
 
         try {
             List<File> files = (List<File>) session.createCriteria(File.class).list();
+            String bpmnFilesDir = this.context.getRealPath(this.context.getInitParameter("bpmn-files-dir"));
 
-            //String bpmnFilesDir = this.context.getRealPath(this.context.getInitParameter("bpmn-files-dir"));
-            //String filePathStr = bpmnFilesDir + "/" + file.getTitle();
-            //java.nio.file.Path filePath = Paths.get(filePathStr);
-            //file.setLastModified(fh.getFileLastModifiedString(filePath));
+            for (File file : files) {
+                String filePathStr = bpmnFilesDir + "/" + file.getTitle();
+                java.nio.file.Path filePath = Paths.get(filePathStr);
+                file.setLastModified(fh.getFileLastModifiedString(filePath));
+            }
 
             return Response.ok(new Files(files), MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
