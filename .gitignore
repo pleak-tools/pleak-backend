@@ -1,6 +1,3 @@
 .idea
-apache-tomcat/logs/
-apache-tomcat/temp/
-apache-tomcat/tomcat.pid
-apache-tomcat/webapps/pleak/WEB-INF/classes/*/
-apache-tomcat/webapps/pleak/files/
+target/
+src/main/webapp/files
