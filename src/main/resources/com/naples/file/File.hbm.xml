@@ -7,11 +7,11 @@
             <column name="id" />
             <generator class="identity" />
         </id>
+        <many-to-one name="user" class="com.naples.user.User" fetch="select">
+            <column name="user_id" not-null="true" />
+        </many-to-one>
         <property name="title" type="string">
             <column name="title" length="255" not-null="true" />
-        </property>
-        <property name="userId" type="java.lang.Integer">
-            <column name="user_id" not-null="true"/>
         </property>
 
         <filter name="userFilter" condition="user_id = :userFilterParam"/>

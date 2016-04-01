@@ -10,7 +10,7 @@ This is a new and improved repository for pleak-backend that uses:
 ## Requirements
 - Java 1.8
 - Maven 3.0+
-- MySQL 5.5+```
+- MySQL 5.5+
 
 ## Install Maven
 ```sudo apt-get install maven```

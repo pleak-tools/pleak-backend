@@ -13,5 +13,6 @@
     <property name="show_sql">true</property>
     <property name="format_sql">true</property>
     <mapping resource="com/naples/file/File.hbm.xml" />
+    <mapping resource="com/naples/user/User.hbm.xml" />
 </session-factory>
 </hibernate-configuration>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="com.naples.user.User" table="users" catalog="pleak">
+    <id name="id" type="java.lang.Integer">
+      <column name="id" />
+      <generator class="identity" />
+    </id>
+    <property name="email" type="string">
+      <column name="email" length="255" not-null="true" />
+    </property>
+    <property name="password" type="string">
+      <column name="password" not-null="true"/>
+    </property>
+    <set name="files" table="files" inverse="true" lazy="true" fetch="select">
+      <key>
+        <column name="user_id" not-null="true"/>
+      </key>
+      <one-to-many class="com.naples.file.File"/>
+    </set>
+
+    <filter name="userFilterByEmail" condition="email = :userFilterParam"/>
+  </class>
+
+  <filter-def name="userFilterByEmail">
+    <filter-param name="userFilterParam" type="string"/>
+  </filter-def>
+</hibernate-mapping>

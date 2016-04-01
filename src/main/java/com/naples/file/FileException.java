@@ -1,4 +1,4 @@
-package com.naples.helper;
+package com.naples.file;
 
 public class FileException extends Exception {
   protected int code;

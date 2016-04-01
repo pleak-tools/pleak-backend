@@ -1,4 +1,4 @@
-package com.naples.helper;
+package com.naples.file;
 
 import javax.servlet.http.Part;
 import java.io.InputStream;
@@ -39,39 +39,6 @@ public class FileHelper {
     Matcher m = p.matcher(fileName);
 
     return m.find();
-  }
-
-  public List<Path> getFilePaths(Path filesPath) throws IOException {
-    List<Path> filePaths = new ArrayList<>();
-
-    DirectoryStream<Path> stream = Files.newDirectoryStream(filesPath, "*.bpmn");
-
-    for (Path entry: stream) {
-      filePaths.add(entry);
-    }
-    Collections.sort(filePaths);
-
-    return filePaths;
-  }
-
-  public List<String> getFileNames(List<Path> filePaths) throws IOException {
-    List<String> fileNames = new ArrayList<>();
-
-    for (Path entry: filePaths) {
-      fileNames.add(entry.getFileName().toString());
-    }
-
-    return fileNames;
-  }
-
-  public List<String> getFileModifiedDates(List<Path> filePaths) throws IOException {
-    List<String> fileModifiedDates = new ArrayList<>();
-
-    for (Path entry: filePaths) {
-      fileModifiedDates.add(getFileLastModifiedString(entry));
-    }
-
-    return fileModifiedDates;
   }
 
   public void saveFile(String fileContent, String fileMD5, String filePathStr) throws FileException, NoSuchAlgorithmException, IOException {
