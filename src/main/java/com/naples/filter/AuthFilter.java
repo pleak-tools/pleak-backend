@@ -66,7 +66,7 @@ public class AuthFilter implements ContainerRequestFilter {
     Key key = KeyUtil.getKey();
 
     try {
-      if (jsonWebToken != null && jsonWebToken.length() != 0)  {
+      if (jsonWebToken != null && jsonWebToken.length() != 0 && !jsonWebToken.equals("null"))  {
         userIdStr = Jwts.parser().setSigningKey(key).parseClaimsJws(jsonWebToken).getBody().getSubject();
         userId = Integer.parseInt(userIdStr);
       }
