@@ -17,9 +17,6 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Collection;
 
-import org.hibernate.Session;
-import org.hibernate.Filter;
-
 import com.naples.helper.Error;
 import com.naples.util.KeyUtil;
 import com.naples.util.HibernateUtil;
@@ -38,8 +35,6 @@ public class AuthFilter implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext requestContext) {
     Method method = resourceInfo.getResourceMethod();
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    session.beginTransaction();
 
     if (requestContext.getMethod().equals("OPTIONS")) {
       // Do nothing
