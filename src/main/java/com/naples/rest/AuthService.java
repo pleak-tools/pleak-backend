@@ -23,6 +23,7 @@ import javax.annotation.security.DenyAll;
 
 import org.hibernate.Session;
 import org.hibernate.Filter;
+import org.hibernate.HibernateException;
 
 import com.naples.helper.Token;
 import com.naples.util.HibernateUtil;
@@ -80,9 +81,10 @@ public class AuthService {
     session.beginTransaction();
     Filter filter = session.enableFilter("userFilterByEmail");
     filter.setParameter("userFilterParam", user.getEmail());
-    filter.validate();
 
     try {
+      filter.validate();
+
       List<User> users = (List<User>) session.createCriteria(User.class).list();
       if (users.size() == 0) {
         return Response.status(404).entity(new Error("User not found.")).build();
@@ -99,6 +101,8 @@ public class AuthService {
         return Response.status(403).entity(new Error("Wrong password.")).build();
       }
 
+    } catch(HibernateException e) {
+      return Response.status(400).entity(new Error("Input not valid.")).build();
     } catch(Exception e) {
       e.printStackTrace();
       return Response.status(400).entity(new Error("Server error.")).build();

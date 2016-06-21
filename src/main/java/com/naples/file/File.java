@@ -6,8 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+import java.util.Iterator;
 
 import com.naples.user.User;
+import com.naples.helper.Action;
+import com.naples.json.JsonFilePermission;
 
 public class File implements Comparable<File>, java.io.Serializable {
 
@@ -19,6 +26,8 @@ public class File implements Comparable<File>, java.io.Serializable {
     Integer id;
     String title;
     User user;
+    String publicToken;
+    Set<FilePermission> filePermissions = new HashSet<FilePermission>(0);
 
     // Other
     Path path;
@@ -64,6 +73,10 @@ public class File implements Comparable<File>, java.io.Serializable {
         return md5Hash;
     }
 
+    public void setMD5Hash(String md5Hash) {
+        this.md5Hash = md5Hash;
+    }
+
     public void loadMD5Hash() throws NoSuchAlgorithmException, IOException {
         this.md5Hash = this.fh.getMD5Hash(path.toString());
     }
@@ -78,6 +91,14 @@ public class File implements Comparable<File>, java.io.Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Set<FilePermission> getFilePermissions() {
+        return filePermissions;
+    }
+
+    public void setFilePermissions(Set<FilePermission> filePermissions) {
+        this.filePermissions = filePermissions;
     }
 
     public void save() throws FileException, NoSuchAlgorithmException, IOException {
@@ -98,10 +119,40 @@ public class File implements Comparable<File>, java.io.Serializable {
         this.path = Paths.get(bpmnFilesDir + "/" + id);
     }
 
+    public void setPublic() {
+        if (this.publicToken.length() == 0) {
+            this.publicToken = UUID.randomUUID().toString().replaceAll("-", "");
+        }
+    }
+
+    public void setPrivate() {
+        if (this.publicToken.length() > 0) this.publicToken = "";
+    }
+
+    public boolean verifyPublicToken(String token) {
+        return this.publicToken == token && this.publicToken.length() > 0;
+    }
+
+    public boolean canBeViewedBy(int userId) {
+        if (this.user.getId() == userId) {
+            return true;
+        } else {
+            Iterator iterator = filePermissions.iterator();
+            while (iterator.hasNext()) {
+                FilePermission fp = (FilePermission)iterator.next();
+                if (fp.getUser().getId() == userId &&
+                    (fp.getAction().getTitle().equals("view") ||
+                     fp.getAction().getTitle().equals("edit")) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public int compareTo(File file) {
         return this.id-file.getId();
     }
-
 
 }

@@ -2,8 +2,10 @@ package com.naples.user;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Iterator;
 
 import com.naples.file.File;
+import com.naples.file.FilePermission;
 import com.naples.bcrypt.BCrypt;
 
 public class User implements java.io.Serializable {
@@ -13,6 +15,7 @@ public class User implements java.io.Serializable {
   String email;
   String password;
   Set<File> files = new HashSet<File>(0);
+  Set<FilePermission> filePermissions = new HashSet<FilePermission>(0);
 
   public User() {}
 
@@ -54,6 +57,14 @@ public class User implements java.io.Serializable {
     this.files = files;
   }
 
+  public Set<FilePermission> getFilePermissions() {
+    return filePermissions;
+  }
+
+  public void setFilePermissions(Set<FilePermission> filePermissions) {
+    this.filePermissions = filePermissions;
+  }
+
   public boolean isCorrectPassword(String plaintext) {
     return BCrypt.checkpw(plaintext, this.password);
   }
@@ -68,6 +79,47 @@ public class User implements java.io.Serializable {
       return true;
     }
     return false;
+  }
+
+  public boolean canView(File file) {
+    boolean canView = false;
+    // TODO: might be faster with a query at some point?
+    Iterator iterator = filePermissions.iterator();
+    while (iterator.hasNext()) {
+      FilePermission fp = (FilePermission)iterator.next();
+      if (fp.getFile() == file && fp.getAction().getTitle().equals("view")) {
+        canView = true;
+      }
+    }
+    return canView;
+  }
+
+  public boolean canEdit(File file) {
+    boolean canView = false;
+    // TODO: might be faster with a query at some point?
+    Iterator iterator = filePermissions.iterator();
+    while (iterator.hasNext()) {
+      FilePermission fp = (FilePermission)iterator.next();
+      if (fp.getFile() == file && fp.getAction().getTitle().equals("edit")) {
+        canView = true;
+      }
+    }
+    return canView;
+  }
+
+  public Set<File> getAllFiles() {
+    Set<File> allFiles = new HashSet<File>(0);
+    allFiles.addAll(files);
+
+    Iterator iterator = filePermissions.iterator();
+    while (iterator.hasNext()) {
+      FilePermission fp = (FilePermission)iterator.next();
+      if ( !allFiles.contains(fp.getFile()) ) {
+        allFiles.add(fp.getFile());
+      }
+    }
+
+    return allFiles;
   }
 
   @Override

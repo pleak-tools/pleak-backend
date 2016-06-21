@@ -14,6 +14,13 @@
             <column name="title" length="255" not-null="true" />
         </property>
 
+        <set name="filePermissions" table="file_permissions" inverse="true" lazy="false" fetch="select" cascade="all">
+          <key>
+            <column name="file_id" not-null="true"/>
+          </key>
+          <one-to-many class="com.naples.file.FilePermission"/>
+        </set>
+
         <filter name="userFilter" condition="user_id = :userFilterParam"/>
     </class>
 
