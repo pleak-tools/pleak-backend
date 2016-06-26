@@ -238,6 +238,7 @@ public class FileService {
                 dbFile.setUser(user);
                 dbFile.setContent(file.getContent());
                 dbFile.setTitle(file.getTitle());
+                dbFile.setPublished(false);
                 session.save(dbFile);
                 dbFile.build(context);
                 dbFile.save();

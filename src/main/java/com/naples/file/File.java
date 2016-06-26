@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.Iterator;
 
+import com.naples.generator.FilePublicUriGenerator;
 import com.naples.user.User;
 import com.naples.helper.Action;
 import com.naples.json.JsonFilePermission;
@@ -26,8 +27,12 @@ public class File implements Comparable<File>, java.io.Serializable {
     Integer id;
     String title;
     User user;
+
     String publicToken;
     Set<FilePermission> filePermissions = new HashSet<FilePermission>(0);
+
+    Boolean published;
+    String uri;
 
     // Other
     Path path;
@@ -40,7 +45,6 @@ public class File implements Comparable<File>, java.io.Serializable {
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -48,7 +52,6 @@ public class File implements Comparable<File>, java.io.Serializable {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -56,7 +59,6 @@ public class File implements Comparable<File>, java.io.Serializable {
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
     }
@@ -64,7 +66,6 @@ public class File implements Comparable<File>, java.io.Serializable {
     public String getLastModified() {
         return lastModified;
     }
-
     public void loadLastModified() {
         this.lastModified = this.fh.getFileLastModifiedString(path);
     }
@@ -72,11 +73,9 @@ public class File implements Comparable<File>, java.io.Serializable {
     public String getMD5Hash() {
         return md5Hash;
     }
-
     public void setMD5Hash(String md5Hash) {
         this.md5Hash = md5Hash;
     }
-
     public void loadMD5Hash() throws NoSuchAlgorithmException, IOException {
         this.md5Hash = this.fh.getMD5Hash(path.toString());
     }
@@ -84,21 +83,27 @@ public class File implements Comparable<File>, java.io.Serializable {
     public String getContent() {
         return content;
     }
-
-    public void loadContent() throws IOException {
-        this.content = this.fh.getContent(path);
-    }
-
     public void setContent(String content) {
         this.content = content;
+    }
+    public void loadContent() throws IOException {
+        this.content = this.fh.getContent(path);
     }
 
     public Set<FilePermission> getFilePermissions() {
         return filePermissions;
     }
-
     public void setFilePermissions(Set<FilePermission> filePermissions) {
         this.filePermissions = filePermissions;
+    }
+
+    public Boolean getPublished() { return published; }
+    public void setPublished(Boolean published) { this.published = published; }
+
+    public String getUri() { return uri; }
+    public void setUri(String uri) { this.uri = uri; }
+    public void createUri(FilePublicUriGenerator generator) {
+        this.uri = generator.getUri();
     }
 
     public void save() throws FileException, NoSuchAlgorithmException, IOException {

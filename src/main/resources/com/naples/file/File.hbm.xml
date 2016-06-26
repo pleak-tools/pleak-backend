@@ -21,6 +21,13 @@
           <one-to-many class="com.naples.file.FilePermission"/>
         </set>
 
+        <property name="published" type="boolean">
+            <column name="published" length="255" not-null="true" />
+        </property>
+        <property name="uri" type="string">
+            <column name="uri" length="255" />
+        </property>
+
         <filter name="userFilter" condition="user_id = :userFilterParam"/>
     </class>
 

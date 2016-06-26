@@ -1,0 +1,5 @@
+ALTER TABLE files
+ADD (
+    published BOOL NOT NULL DEFAULT FALSE,
+    uri VARCHAR(255)
+);
