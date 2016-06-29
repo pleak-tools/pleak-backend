@@ -251,6 +251,7 @@ public class FileService {
                 newFile.setTitle(file.getTitle());
                 newFile.setContent(file.getContent());
                 newFile.setUser(user);
+                newFile.setPublished(false);
                 session.save(newFile);
                 newFile.build(context);
                 newFile.save();
