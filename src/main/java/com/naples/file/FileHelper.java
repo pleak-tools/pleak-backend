@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 public class FileHelper {
 
   public boolean isCorrectFileName(String fileName) {
-    String WHITELIST = "[^0-9A-Za-z.\\-_]+";
+    String WHITELIST = "[^0-9A-Za-z.\\-_ ]+";
     String BEGINNING = "^[^\\.]";
 
     Pattern pw = Pattern.compile(WHITELIST);
