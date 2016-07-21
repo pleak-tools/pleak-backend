@@ -4,26 +4,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.naples.file.File;
-import com.naples.file.FilePermission;
+import com.naples.file.Permission;
 
-public class JsonFile implements Comparable<JsonFile>, java.io.Serializable {
+public class JsonFile extends JsonPobject implements java.io.Serializable {
 
-    Integer id;
-    String title;
     String content;
-
-    String lastModified;
-    String md5Hash;
-
     Boolean published;
     String uri;
-
-    JsonUser user;
-    Set<JsonFilePermission> filePermissions = new HashSet<JsonFilePermission>(0);
+    String lastModified;
+    String md5Hash;
 
     public JsonFile() {}
 
     public JsonFile(File file) {
+        this.type = "file";
         this.id = file.getId();
         this.title = file.getTitle();
         this.content = file.getContent();
@@ -31,34 +25,16 @@ public class JsonFile implements Comparable<JsonFile>, java.io.Serializable {
         this.lastModified = file.getLastModified();
         this.md5Hash = file.getMD5Hash();
 
+        this.directory = new JsonDirectory();
+        if (file.getDirectory() != null) this.directory.setId(file.getDirectory().getId());
+
         this.published = file.getPublished();
-        if(this.published) this.uri = file.getUri();
+        if (this.published) this.uri = file.getUri();
 
         this.user = new JsonUser(file.getUser());
-        for (FilePermission fp : file.getFilePermissions()) {
-            this.filePermissions.add(new JsonFilePermission(fp));
+        for (Permission p : file.getPermissions()) {
+            this.permissions.add(new JsonPermission(p));
         }
-    }
-
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public JsonUser getUser() {
-        return user;
-    }
-    public void setUser(JsonUser user) {
-        this.user = user;
     }
 
     public String getLastModified() {
@@ -82,22 +58,22 @@ public class JsonFile implements Comparable<JsonFile>, java.io.Serializable {
         this.content = content;
     }
 
-    public Boolean getPublished() { return published; }
-    public void setPublished(Boolean published) { this.published = published; }
-
-    public String getUri() { return uri; }
-    public void setUri(String uri) { this.uri = uri; }
-
-    public Set<JsonFilePermission> getFilePermissions() {
-        return filePermissions;
+    public Boolean getPublished() {
+        return published;
     }
-    public void setFilePermissions(Set<JsonFilePermission> filePermissions) {
-        this.filePermissions = filePermissions;
+    public void setPublished(Boolean published) {
+        this.published = published;
     }
 
-    @Override
-    public int compareTo(JsonFile file) {
-        return this.id-file.getId();
+    public String getUri() {
+        return uri;
+    }
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
+    public void removeSensitiveData() {
+        this.permissions.clear();
+        this.user = null;
+    }
 }

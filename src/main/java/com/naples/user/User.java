@@ -4,18 +4,19 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Iterator;
 
-import com.naples.file.File;
-import com.naples.file.FilePermission;
+import com.naples.file.Pobject;
+import com.naples.file.Permission;
+import com.naples.file.Directory;
 import com.naples.bcrypt.BCrypt;
 
-public class User implements java.io.Serializable {
+public class User {
 
   // Database
   Integer id;
   String email;
   String password;
-  Set<File> files = new HashSet<File>(0);
-  Set<FilePermission> filePermissions = new HashSet<FilePermission>(0);
+  Set<Pobject> pobjects = new HashSet<Pobject>(0);
+  Set<Permission> permissions = new HashSet<Permission>(0);
 
   public User() {}
 
@@ -28,7 +29,6 @@ public class User implements java.io.Serializable {
   public Integer getId() {
     return id;
   }
-
   public void setId(Integer id) {
     this.id = id;
   }
@@ -36,7 +36,6 @@ public class User implements java.io.Serializable {
   public String getEmail() {
     return email;
   }
-
   public void setEmail(String email) {
     this.email = email;
   }
@@ -44,25 +43,57 @@ public class User implements java.io.Serializable {
   public String getPassword() {
     return password;
   }
-
   public void setPassword(String password) {
     this.password = password;
   }
 
-  public Set<File> getFiles() {
-    return files;
+  public Set<Pobject> getPobjects() {
+    return pobjects;
+  }
+  public void setPobjects(Set<Pobject> pobjects) {
+    this.pobjects = pobjects;
   }
 
-  public void setFiles(Set<File> files) {
-    this.files = files;
+  public Set<Permission> getPermissions() {
+    return permissions;
+  }
+  public void setPermissions(Set<Permission> permissions) {
+    this.permissions = permissions;
   }
 
-  public Set<FilePermission> getFilePermissions() {
-    return filePermissions;
+  public Directory getRoot() {
+    for (Pobject po : pobjects) {
+      if (po.getDirectory() == null && po.getTitle().equals("root")) {
+        return (Directory) po;
+      }
+    }
+    return new Directory();
   }
 
-  public void setFilePermissions(Set<FilePermission> filePermissions) {
-    this.filePermissions = filePermissions;
+  public Directory getShared() {
+    Directory shared = new Directory();
+    shared.setTitle("shared");
+    shared.setUser(this);
+
+    for (Permission p : permissions) {
+      Pobject pobjectParent = p.getPobject().getDirectory();
+      if (pobjectParent != null) {
+        boolean hasRightsToParent = false;
+        for (Permission pp : pobjectParent.getPermissions()) {
+          if (pp.getUser() == this) {
+            hasRightsToParent = true;
+            break;
+          }
+        }
+        if (!hasRightsToParent) {
+          shared.getPobjects().add(p.getPobject());
+        }
+      } else {
+        shared.getPobjects().add(p.getPobject());
+      }
+    }
+
+    return shared;
   }
 
   public boolean isCorrectPassword(String plaintext) {
@@ -81,45 +112,45 @@ public class User implements java.io.Serializable {
     return false;
   }
 
-  public boolean canView(File file) {
+  public boolean canView(Pobject pobject) {
     boolean canView = false;
     // TODO: might be faster with a query at some point?
-    Iterator iterator = filePermissions.iterator();
+    Iterator iterator = permissions.iterator();
     while (iterator.hasNext()) {
-      FilePermission fp = (FilePermission)iterator.next();
-      if (fp.getFile() == file && fp.getAction().getTitle().equals("view")) {
+      Permission p = (Permission)iterator.next();
+      if (p.getPobject() == pobject && p.getAction().getTitle().equals("view")) {
         canView = true;
       }
     }
     return canView;
   }
 
-  public boolean canEdit(File file) {
-    boolean canView = false;
+  public boolean canEdit(Pobject pobject) {
+    boolean canEdit = false;
     // TODO: might be faster with a query at some point?
-    Iterator iterator = filePermissions.iterator();
+    Iterator iterator = permissions.iterator();
     while (iterator.hasNext()) {
-      FilePermission fp = (FilePermission)iterator.next();
-      if (fp.getFile() == file && fp.getAction().getTitle().equals("edit")) {
-        canView = true;
+      Permission p = (Permission)iterator.next();
+      if (p.getPobject() == pobject && p.getAction().getTitle().equals("edit")) {
+        canEdit = true;
       }
     }
-    return canView;
+    return canEdit;
   }
 
-  public Set<File> getAllFiles() {
-    Set<File> allFiles = new HashSet<File>(0);
-    allFiles.addAll(files);
+  public Set<Pobject> getAllPobjects() {
+    Set<Pobject> allPobjects = new HashSet<Pobject>(0);
+    allPobjects.addAll(pobjects);
 
-    Iterator iterator = filePermissions.iterator();
+    Iterator iterator = permissions.iterator();
     while (iterator.hasNext()) {
-      FilePermission fp = (FilePermission)iterator.next();
-      if ( !allFiles.contains(fp.getFile()) ) {
-        allFiles.add(fp.getFile());
+      Permission p = (Permission)iterator.next();
+      if ( !allPobjects.contains(p.getPobject()) ) {
+        allPobjects.add(p.getPobject());
       }
     }
 
-    return allFiles;
+    return allPobjects;
   }
 
   @Override

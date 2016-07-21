@@ -1,7 +1,5 @@
 package com.naples.helper;
 
-import com.naples.file.FilePermission;
-
 public class Action {
 
     Integer id;

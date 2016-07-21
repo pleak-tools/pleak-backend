@@ -11,5 +11,11 @@
         <property name="title" type="string">
             <column name="title" length="255" not-null="true" />
         </property>
+
+        <filter name="actionFilterByTitle" condition="title = :actionFilterParam"/>
     </class>
+
+    <filter-def name="actionFilterByTitle">
+        <filter-param name="actionFilterParam" type="string"/>
+    </filter-def>
 </hibernate-mapping>

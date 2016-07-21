@@ -16,18 +16,18 @@
       <column name="password" not-null="true"/>
     </property>
 
-    <set name="files" table="files" inverse="true" lazy="true" fetch="select" cascade="all">
+    <set name="pobjects" table="pobjects" inverse="true" lazy="false" fetch="select" cascade="all">
       <key>
         <column name="user_id" not-null="true"/>
       </key>
-      <one-to-many class="com.naples.file.File"/>
+      <one-to-many class="com.naples.file.Pobject"/>
     </set>
 
-    <set name="filePermissions" table="file_permissions" inverse="true" lazy="true" fetch="select" cascade="all">
+    <set name="permissions" table="permissions" inverse="true" lazy="true" fetch="select" cascade="all">
       <key>
         <column name="user_id" not-null="true"/>
       </key>
-      <one-to-many class="com.naples.file.FilePermission"/>
+      <one-to-many class="com.naples.file.Permission"/>
     </set>
 
     <filter name="userFilterByEmail" condition="email = :userFilterParam"/>

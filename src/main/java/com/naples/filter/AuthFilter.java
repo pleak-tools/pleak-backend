@@ -66,10 +66,9 @@ public class AuthFilter implements ContainerRequestFilter {
         userId = Integer.parseInt(userIdStr);
       }
     } catch(SignatureException e) {
-      System.out.println("User token invalid or expired after server restart.");
       //e.printStackTrace();
     } catch(Exception e) {
-      e.printStackTrace();
+      //e.printStackTrace();
     }
 
     return userId;

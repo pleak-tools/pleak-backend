@@ -3,14 +3,14 @@ package com.naples.file;
 import com.naples.user.User;
 import com.naples.helper.Action;
 
-public class FilePermission {
+public class Permission {
 
     Integer id;
-    File file;
+    Pobject pobject;
     User user;
     Action action;
 
-    public FilePermission() {}
+    public Permission() {}
 
     public Integer getId() {
         return id;
@@ -20,12 +20,12 @@ public class FilePermission {
         this.id = id;
     }
 
-    public File getFile() {
-        return file;
+    public Pobject getPobject() {
+        return pobject;
     }
 
-    public void setFile(File file) {
-        this.file = file;
+    public void setPobject(Pobject pobject) {
+        this.pobject = pobject;
     }
 
     public User getUser() {

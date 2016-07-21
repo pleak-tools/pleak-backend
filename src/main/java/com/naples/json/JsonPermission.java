@@ -1,20 +1,20 @@
 package com.naples.json;
 
-import com.naples.file.FilePermission;
+import com.naples.file.Permission;
 import com.naples.helper.Action;
 
-public class JsonFilePermission implements Comparable<JsonFilePermission>, java.io.Serializable {
+public class JsonPermission implements Comparable<JsonPermission>, java.io.Serializable {
 
     Integer id;
     Action action;
     JsonUser user;
 
-    public JsonFilePermission() {}
+    public JsonPermission() {}
 
-    public JsonFilePermission(FilePermission fp) {
-        this.id = fp.getId();
-        this.action = fp.getAction();
-        this.user = new JsonUser(fp.getUser());
+    public JsonPermission(Permission p) {
+        this.id = p.getId();
+        this.action = p.getAction();
+        this.user = new JsonUser(p.getUser());
     }
 
     public Integer getId() {
@@ -42,7 +42,7 @@ public class JsonFilePermission implements Comparable<JsonFilePermission>, java.
     }
 
     @Override
-    public int compareTo(JsonFilePermission filePermission) {
-        return this.user.getId()-filePermission.user.getId();
+    public int compareTo(JsonPermission permission) {
+        return this.user.getId()-permission.user.getId();
     }
 }

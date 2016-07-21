@@ -17,11 +17,11 @@
     <property name="hibernate.c3p0.max_statements">50</property>
     <property name="hibernate.c3p0.idle_test_period">300</property>
 
-    <property name="show_sql">true</property>
+    <property name="show_sql">false</property>
     <property name="format_sql">true</property>
-    <mapping resource="com/naples/file/File.hbm.xml" />
+    <mapping resource="com/naples/file/Pobject.hbm.xml" />
     <mapping resource="com/naples/user/User.hbm.xml" />
     <mapping resource="com/naples/helper/Action.hbm.xml" />
-    <mapping resource="com/naples/file/FilePermission.hbm.xml" />
+    <mapping resource="com/naples/file/Permission.hbm.xml" />
 </session-factory>
 </hibernate-configuration>

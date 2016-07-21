@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping">
+<hibernate-mapping>
+    <class name="com.naples.file.Pobject" table="pobjects" catalog="pleak" discriminator-value="-1">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+
+        <discriminator column="type_id" type="java.lang.Integer"/>
+
+        <many-to-one name="user" class="com.naples.user.User" fetch="select">
+            <column name="user_id" not-null="true" />
+        </many-to-one>
+
+        <many-to-one name="directory" class="com.naples.file.Pobject" fetch="select">
+            <column name="parent_id"/>
+        </many-to-one>
+
+        <property name="title" type="string">
+            <column name="title" length="255" not-null="true" />
+        </property>
+
+        <set name="permissions" table="permissions" inverse="true" lazy="false" fetch="select" cascade="all">
+          <key>
+            <column name="pobject_id" not-null="true"/>
+          </key>
+          <one-to-many class="com.naples.file.Permission"/>
+        </set>
+
+        <subclass name="com.naples.file.File" extends="Pobject" discriminator-value="1">
+            <property name="published" type="boolean">
+                <column name="published" length="255" not-null="true" />
+            </property>
+            <property name="uri" type="string">
+                <column name="uri" length="255" />
+            </property>
+        </subclass>
+
+        <subclass name="com.naples.file.Directory" extends="Pobject" discriminator-value="2">
+            <set name="pobjects" table="pobjects" inverse="false" lazy="false" fetch="select" cascade="save-update, delete">
+                <key>
+                    <column name="parent_id" not-null="true"/>
+                </key>
+                <one-to-many class="com.naples.file.Pobject"/>
+            </set>
+        </subclass>
+
+        <filter name="userFilter" condition="user_id = :userFilterParam"/>
+    </class>
+
+    <filter-def name="userFilter">
+        <filter-param name="userFilterParam" type="java.lang.Integer"/>
+    </filter-def>
+</hibernate-mapping>
