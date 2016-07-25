@@ -106,9 +106,9 @@ public class FileService {
             User user = (User) session.get(User.class, userId);
 
             Directory parent = null;
-            if (dir.getDirectory().getTitle() != null && dir.getDirectory().getTitle() == "root") {
+            if (dir.getDirectory().getTitle() != null && dir.getDirectory().getTitle().equals("root")) {
                 parent = user.getRoot();
-            } else if (dir.getDirectory() != null && dir.getDirectory().getId() != null) {
+            } else if (dir.getDirectory().getId() != null) {
                 parent = (Directory) session.get(Directory.class, dir.getDirectory().getId());
             }
 
@@ -235,7 +235,7 @@ public class FileService {
             // Create a new dir if not existing
             if (dbDir == null) {
                 Directory parent = null;
-                if (dir.getDirectory().getTitle() != null && dir.getDirectory().getTitle() == "root") {
+                if (dir.getDirectory().getTitle() != null && dir.getDirectory().getTitle().equals("root")) {
                     parent = user.getRoot();
                 } else if (dir.getDirectory() != null && dir.getDirectory().getId() != null) {
                     parent = (Directory) session.get(Directory.class, dir.getDirectory().getId());
@@ -346,7 +346,7 @@ public class FileService {
             Directory parent = null;
             if (file.getDirectory() != null && file.getDirectory().getId() != null) {
                 parent = (Directory) session.get(Directory.class, file.getDirectory().getId());
-            } else if (file.getDirectory().getTitle() != null && file.getDirectory().getTitle() == "root") {
+            } else if (file.getDirectory().getTitle() != null && file.getDirectory().getTitle().equals("root")) {
                 parent = user.getRoot();
             }
 
@@ -433,7 +433,7 @@ public class FileService {
             Directory parent = null;
             if (file.getDirectory() != null && file.getDirectory().getId() != null) {
                 parent = (Directory) session.get(Directory.class, file.getDirectory().getId());
-            } else if (file.getDirectory().getTitle() != null && file.getDirectory().getTitle() == "root") {
+            } else if (file.getDirectory().getTitle() != null && file.getDirectory().getTitle().equals("root")) {
                 parent = user.getRoot();
             }
 
