@@ -3,6 +3,7 @@ package com.naples.file;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
+import java.util.Iterator;
 
 import org.hibernate.Session;
 import org.hibernate.Filter;
@@ -63,7 +64,10 @@ public class Pobject implements Comparable<Pobject> {
     public boolean updatePermissions(JsonPobject pobject, Session session) {
         boolean changesMade = false;
 
-        for (Permission p : permissions) {
+        Iterator<Permission> iter = permissions.iterator();
+        while (iter.hasNext()) {
+            Permission p = iter.next();
+
             boolean match = false;
             for (JsonPermission jp : pobject.getPermissions()) {
                 boolean userMatch = jp.getUser().getId() == p.getUser().getId();
@@ -75,7 +79,7 @@ public class Pobject implements Comparable<Pobject> {
             }
 
             if (!match) {
-                permissions.remove(p);
+                iter.remove();
                 session.delete(p);
                 session.flush();
 
