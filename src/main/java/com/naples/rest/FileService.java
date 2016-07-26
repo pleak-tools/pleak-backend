@@ -312,6 +312,9 @@ public class FileService {
 
             dir.build(context);
             dir.delete();
+            dir.getDirectory().getPobjects().remove(dir);
+
+            session.saveOrUpdate(dir.getDirectory());
             session.delete(dir);
             session.getTransaction().commit();
 
@@ -358,7 +361,20 @@ public class FileService {
 
             File dbFile = new File();
             dbFile.setUser(user);
-            dbFile.setContent(null);
+
+            File oldFile = file.getId() == null ? null : (File) session.get(File.class, file.getId());
+            if (oldFile != null) {
+                oldFile.build(context);
+                oldFile.loadContent();
+                if (oldFile.getUser() == user || user.canEdit(oldFile)) {
+                    dbFile.setContent(oldFile.getContent());
+                } else {
+                    return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
+                }
+            } else {
+                dbFile.setContent(null);
+            }
+
             dbFile.setTitle(file.getTitle());
             dbFile.setPublished(false);
             dbFile.setDirectory(parent);

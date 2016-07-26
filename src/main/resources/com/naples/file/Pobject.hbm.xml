@@ -14,7 +14,7 @@
             <column name="user_id" not-null="true" />
         </many-to-one>
 
-        <many-to-one name="directory" class="com.naples.file.Pobject" fetch="select">
+        <many-to-one name="directory" class="com.naples.file.Directory" fetch="select">
             <column name="parent_id"/>
         </many-to-one>
 
@@ -39,7 +39,7 @@
         </subclass>
 
         <subclass name="com.naples.file.Directory" extends="Pobject" discriminator-value="2">
-            <set name="pobjects" table="pobjects" inverse="false" lazy="false" fetch="select" cascade="save-update, delete">
+            <set name="pobjects" table="pobjects" inverse="false" lazy="false" fetch="select" cascade="all">
                 <key>
                     <column name="parent_id" not-null="true"/>
                 </key>

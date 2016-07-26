@@ -16,14 +16,14 @@
       <column name="password" not-null="true"/>
     </property>
 
-    <set name="pobjects" table="pobjects" inverse="true" lazy="false" fetch="select" cascade="all">
+    <set name="pobjects" table="pobjects" inverse="true" lazy="false" fetch="select" cascade="delete">
       <key>
         <column name="user_id" not-null="true"/>
       </key>
       <one-to-many class="com.naples.file.Pobject"/>
     </set>
 
-    <set name="permissions" table="permissions" inverse="true" lazy="true" fetch="select" cascade="all">
+    <set name="permissions" table="permissions" inverse="true" lazy="true" fetch="select" cascade="delete">
       <key>
         <column name="user_id" not-null="true"/>
       </key>

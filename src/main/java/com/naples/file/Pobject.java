@@ -21,7 +21,7 @@ public class Pobject implements Comparable<Pobject> {
     Integer id;
     String title;
     User user;
-    Pobject directory;
+    Directory directory;
     Set<Permission> permissions = new HashSet<Permission>(0);
 
     public Pobject() {}
@@ -54,10 +54,10 @@ public class Pobject implements Comparable<Pobject> {
         this.permissions = permissions;
     }
 
-    public Pobject getDirectory() {
+    public Directory getDirectory() {
         return directory;
     }
-    public void setDirectory(Pobject directory) {
+    public void setDirectory(Directory directory) {
         this.directory = directory;
     }
 
