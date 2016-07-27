@@ -460,9 +460,13 @@ public class FileService {
             File dbFile = null;
             if (file.getId() != null) {
                 dbFile = (File) session.get(File.class, file.getId());
-                dbFile.build(context);
-                dbFile.loadLastModified();
-            } else {
+                if (dbFile != null) {
+                    dbFile.build(context);
+                    dbFile.loadLastModified();
+                }
+            }
+
+            if (dbFile == null) {
                 if (parent.getUser().getId() != userId) {
                     Error er = new Error("Forbidden: file's directory owner must match with file's owner.");
                     return Response.status(403).entity(er).type(MediaType.APPLICATION_JSON).build();
@@ -531,6 +535,9 @@ public class FileService {
             session.getTransaction().commit();
 
             return Response.status(200).entity(new JsonFile(dbFile)).type(MediaType.APPLICATION_JSON).build();
+        } catch (NullPointerException|FileNotFoundException e) {
+            //e.printStackTrace();
+            return Response.status(404).entity(new Error("File not found.")).type(MediaType.APPLICATION_JSON).build();
         } catch(FileException e) {
             //e.printStackTrace();
             return Response.status(e.getCode()).entity(new Error(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
