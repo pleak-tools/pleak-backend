@@ -366,7 +366,7 @@ public class FileService {
             if (oldFile != null) {
                 oldFile.build(context);
                 oldFile.loadContent();
-                if (oldFile.getUser() == user || user.canEdit(oldFile)) {
+                if (oldFile.getUser() == user || user.canEdit(oldFile) || user.canView(oldFile)) {
                     dbFile.setContent(oldFile.getContent());
                 } else {
                     return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
