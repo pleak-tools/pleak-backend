@@ -259,10 +259,9 @@ public class FileService {
             }
 
             // New permissions
-            if (dbDir.updatePermissions(dir, session)) {
-                for (Pobject po : dbDir.getPobjects()) {
-                    po.inheritPermissions(session);
-                }
+            dbDir.updatePermissions(dir, session);
+            for (Pobject po : dbDir.getPobjects()) {
+                po.inheritPermissions(session);
             }
 
             // New title
@@ -391,10 +390,10 @@ public class FileService {
 
             return Response.ok(new JsonFile(dbFile)).type(MediaType.APPLICATION_JSON).build();
         } catch(FileException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return Response.status(e.getCode()).entity(new Error(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
         } catch(Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             session.close();
@@ -511,7 +510,9 @@ public class FileService {
                 }
 
                 // New permissions
-                dbFile.updatePermissions(file, session);
+                if (file.getId() == dbFile.getId()) {
+                    dbFile.updatePermissions(file, session);
+                }
 
                 // New publish value
                 if (file.getPublished() != dbFile.getPublished()) {
