@@ -89,7 +89,7 @@ Updates (or creates a new) directory and returns it. The permission object can h
 ##DELETE /rest/directories/{id}
 Deletes directory.
 
-##POST /rest/directories/file/
+##POST /rest/directories/files/
 
 ```
 {
@@ -105,10 +105,10 @@ Creates a new file and returns it. Also inherits permissions from parent directo
 - root when ```directory.title = 'root'``` 
 - specific directory when ```directory.id``` has a value of an existing directory ```id``` (which can also be root).
 
-##GET /rest/directories/file/{id}
+##GET /rest/directories/files/{id}
 Returns file.
 
-##PUT /rest/directories/file/{id}
+##PUT /rest/directories/files/{id}
 
 ```
 {
@@ -139,8 +139,8 @@ Updates and returns file. Also inherits permissions from parent directory where 
 
 Creates a public URI for file when ```file.published = true``` or deletes the public URI when ```file.published = false```. Updates file contents when server-side ```file.md5Hash``` matches with supplied ```file.md5Hash``` and creates a new ```file.md5Hash```.
 
-##DELETE /rest/directories/file/{id}
+##DELETE /rest/directories/files/{id}
 Deletes file.
 
-##GET /rest/directories/file/public/{uri}
+##GET /rest/directories/files/public/{uri}
 Returns public file.
