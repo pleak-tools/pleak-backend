@@ -102,9 +102,10 @@ public class AuthService {
       }
 
     } catch(HibernateException e) {
+      //e.printStackTrace();
       return Response.status(400).entity(new Error("Input not valid.")).build();
     } catch(Exception e) {
-      e.printStackTrace();
+      //e.printStackTrace();
       return Response.status(400).entity(new Error("Server error.")).build();
     } finally {
       session.close();

@@ -1,13 +1,9 @@
 package com.naples.rest;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.List;
+//import java.util.Set;
+//import java.util.HashSet;
+import java.util.Date;
 
-import java.nio.file.*;
-
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.FileNotFoundException;
 
 import javax.servlet.ServletContext;
@@ -43,18 +39,13 @@ import com.naples.file.File;
 import com.naples.file.FileHelper;
 import com.naples.file.FileException;
 import com.naples.file.Directory;
-import com.naples.file.Permission;
 
-import com.naples.helper.Action;
 import com.naples.helper.Error;
-import com.naples.helper.Success;
 
 import com.naples.json.JsonFile;
-import com.naples.json.JsonPobject;
 import com.naples.json.JsonDirectory;
-import com.naples.json.JsonPobjectList;
-import com.naples.json.JsonPermission;
-import com.naples.json.JsonUser;
+//import com.naples.json.JsonPobject;
+//import com.naples.json.JsonPobjectList;
 
 @Path("/directories")
 public class FileService {
@@ -74,11 +65,9 @@ public class FileService {
 
             Directory root = user.getRoot();
             root.build(context);
-            root.loadLastModified();
 
             //Directory share = user.getShare();
             //share.build(context);
-            //share.loadLastModified();
 
             Set<Pobject> pobjects = new HashSet<Pobject>(0);
             pobjects.add(root);
@@ -154,7 +143,6 @@ public class FileService {
 
             Directory root = user.getRoot();
             root.build(context);
-            root.loadLastModified();
 
             return Response.ok(new JsonDirectory(root), MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
@@ -177,7 +165,6 @@ public class FileService {
 
             Directory shared = user.getShared();
             shared.build(context);
-            shared.loadLastModified();
 
             return Response.ok(new JsonDirectory(shared), MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
@@ -207,7 +194,6 @@ public class FileService {
             //TODO: add shared directories permission
 
             dir.build(context);
-            dir.loadLastModified();
 
             return Response.ok(new JsonDirectory(dir), MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
@@ -348,7 +334,7 @@ public class FileService {
             Directory parent = null;
             if (file.getDirectory() != null && file.getDirectory().getId() != null) {
                 parent = (Directory) session.get(Directory.class, file.getDirectory().getId());
-            } else if (file.getDirectory().getTitle() != null && file.getDirectory().getTitle().equals("root")) {
+            } else if (file.getDirectory() != null && file.getDirectory().getTitle().equals("root")) {
                 parent = user.getRoot();
             }
 
@@ -380,12 +366,12 @@ public class FileService {
             if (user.getRoot() != parent) {
                 dbFile.inheritPermissions(session);
             }
+            dbFile.setLastModified(new Date());
 
             session.save(dbFile);
             session.getTransaction().commit();
 
             dbFile.build(context);
-            dbFile.loadLastModified();
             dbFile.save();
 
             return Response.ok(new JsonFile(dbFile)).type(MediaType.APPLICATION_JSON).build();
@@ -416,7 +402,6 @@ public class FileService {
             file.build(context);
             file.loadMD5Hash();
             file.loadContent();
-            file.loadLastModified();
 
             return Response.ok(new JsonFile(file), MediaType.APPLICATION_JSON).build();
         } catch (NullPointerException|FileNotFoundException e) {
@@ -444,6 +429,7 @@ public class FileService {
             if ( !fh.isCorrectFileExtension(file.getTitle()) ) throw new FileException("Incorrect file extension.");
 
             User user = (User) session.get(User.class, userId);
+            boolean changesMade = false;
 
             Directory parent = null;
             if (file.getDirectory() != null && file.getDirectory().getId() != null) {
@@ -462,7 +448,6 @@ public class FileService {
                 dbFile = (File) session.get(File.class, file.getId());
                 if (dbFile != null) {
                     dbFile.build(context);
-                    dbFile.loadLastModified();
                 }
             }
 
@@ -477,6 +462,7 @@ public class FileService {
                 dbFile.setTitle(file.getTitle());
                 dbFile.setPublished(false);
                 dbFile.setDirectory(parent);
+                dbFile.setLastModified(new Date());
                 if (user.getRoot() != parent) {
                     dbFile.inheritPermissions(session);
                 }
@@ -484,7 +470,6 @@ public class FileService {
                 session.save(dbFile);
 
                 dbFile.build(context);
-                dbFile.loadLastModified();
                 dbFile.save();
             }
 
@@ -495,10 +480,11 @@ public class FileService {
             }
 
             // New content
-            if (file.getContent() != dbFile.getContent()) {
+            if (file.getContent() != null && file.getContent() != dbFile.getContent()) {
                 dbFile.setContent(file.getContent());
                 dbFile.setMD5Hash(file.getMD5Hash());
                 dbFile.save();
+                if (!changesMade) changesMade = true;
             }
 
             // Only if owner
@@ -506,6 +492,7 @@ public class FileService {
                 // New title
                 if (!file.getTitle().equals(dbFile.getTitle())) {
                     dbFile.setTitle(file.getTitle());
+                    if (!changesMade) changesMade = true;
                 }
 
                 // New parent
@@ -515,7 +502,8 @@ public class FileService {
 
                 // New permissions
                 if (file.getId() == dbFile.getId()) {
-                    dbFile.updatePermissions(file, session);
+                    boolean permissionsUpdated = dbFile.updatePermissions(file, session);
+                    if (!changesMade && permissionsUpdated) changesMade = true;
                 }
 
                 // New publish value
@@ -528,8 +516,11 @@ public class FileService {
                         dbFile.setUri(null);
                         dbFile.setPublished(false);
                     }
+                    if (!changesMade) changesMade = true;
                 }
             }
+
+            if (changesMade) dbFile.setLastModified(new Date());
 
             session.save(dbFile);
             session.getTransaction().commit();

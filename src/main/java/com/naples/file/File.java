@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.Date;
 
 import com.naples.generator.FilePublicUriGenerator;
 import com.naples.user.User;
@@ -24,17 +25,20 @@ public class File extends Pobject {
 
     // Other
     Path path;
-    String lastModified;
+    Date lastModified;
     String md5Hash;
     String content;
 
     public File() {}
 
-    public String getLastModified() {
+    public Date getLastModified() {
         return lastModified;
     }
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
     public void loadLastModified() {
-        this.lastModified = this.fh.getFileLastModifiedString(path);
+        this.lastModified = this.fh.getFileLastModifiedDate(path);
     }
 
     public String getMD5Hash() {
@@ -91,6 +95,9 @@ public class File extends Pobject {
         String bpmnFilesDir = this.context.getRealPath(this.context.getInitParameter("bpmn-files-dir"));
         this.fh = new FileHelper();
         this.path = Paths.get(bpmnFilesDir + "/" + id);
+        if (lastModified == null) {
+            this.lastModified = this.fh.getFileLastModifiedDate(path);
+        }
     }
 
     public boolean canBeViewedBy(int userId) {

@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.text.SimpleDateFormat;
@@ -71,6 +72,10 @@ public class FileHelper {
     }
 
     return false;
+  }
+
+  public Date getFileLastModifiedDate(Path filePath) {
+    return new Date(filePath.toFile().lastModified());
   }
 
   public String getFileLastModifiedString(Path filePath) {

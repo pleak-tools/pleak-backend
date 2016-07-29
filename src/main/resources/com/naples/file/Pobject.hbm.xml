@@ -36,6 +36,9 @@
             <property name="uri" type="string">
                 <column name="uri" length="255" />
             </property>
+            <property name="lastModified" type="timestamp">
+                <column name="last_modified"/>
+            </property>
         </subclass>
 
         <subclass name="com.naples.file.Directory" extends="Pobject" discriminator-value="2">
