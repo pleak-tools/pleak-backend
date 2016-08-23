@@ -1,0 +1,17 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "Test tool for pleak-backend",
+  "main": "test.js",
+  "dependencies": {},
+  "devDependencies": {
+    "frisby": "^0.8.5",
+    "jasmine-node": "^1.14.5",
+    "jasmine-spec-reporter": "^1.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

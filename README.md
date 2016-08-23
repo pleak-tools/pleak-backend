@@ -32,6 +32,14 @@ This is a new and improved repository for pleak-backend that uses:
 ## Backup database
 ```. backup.sh```
 
+## Testing
+Make sure that server is running.
+```cd test```
+If jasmine-node is not installed:
+```npm install```
+Automated tests
+```jasmine-node test-spec.js```
+
 # API
 
 ##POST /rest/directories
