@@ -33,11 +33,44 @@ This is a new and improved repository for pleak-backend that uses:
 ```. backup.sh```
 
 ## Testing
-Make sure that server is running.
+Make sure that server is running and you have the following users:
+
+```
+var user1 = {
+  "id": 4,
+  "credentials": {
+    "email": "test1@example.com",
+    "password": "test1"
+  }
+};
+
+var user2 = {
+  "id": 5,
+  "credentials": {
+    "email": "test2@example.com",
+    "password": "test2"
+  }
+};
+
+var user3 = {
+  "id": 6,
+  "credentials": {
+    "email": "test3@example.com",
+    "password": "test3"
+  }
+};
+```
+
+Navigate to test directory
+
 ```cd test```
+
 If jasmine-node is not installed:
+
 ```npm install```
+
 Automated tests
+
 ```jasmine-node test-spec.js```
 
 # API
