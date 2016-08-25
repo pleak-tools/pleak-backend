@@ -29,15 +29,18 @@ This is a new and improved repository for pleak-backend that uses:
 ## Clean database
 ```mvn flyway:clean```
 
+## Create dev users
+Make sure that the users described in ```src/main/resources/db/dev.sql``` do not make it to a live server.
+```mysql -u root -p < src/main/resources/db/dev.sql```
+
 ## Backup database
 ```. backup.sh```
 
 ## Testing
-Make sure that server is running and you have the following users:
+Make sure that server is running and you have the following users (see above to create dev users):
 
 ```
 var user1 = {
-  "id": 4,
   "credentials": {
     "email": "test1@example.com",
     "password": "test1"
@@ -45,7 +48,6 @@ var user1 = {
 };
 
 var user2 = {
-  "id": 5,
   "credentials": {
     "email": "test2@example.com",
     "password": "test2"
@@ -53,7 +55,6 @@ var user2 = {
 };
 
 var user3 = {
-  "id": 6,
   "credentials": {
     "email": "test3@example.com",
     "password": "test3"
@@ -79,16 +80,16 @@ Automated tests
 
 ```
 {
-  title: string,   
+  title: string,
   directory: {
-    title: string, 
+    title: string,
     id: number
   }
 }
 ```
 
-Creates a new directory with parent as 
-- root when ```directory.title = 'root'``` 
+Creates a new directory with parent as
+- root when ```directory.title = 'root'```
 - specific directory when ```directory.id``` has a value of an existing directory ```id``` (which can also be root)
 
 and returns the directory.
@@ -106,9 +107,9 @@ Returns directory.
 
 ```
 {
-  title: string,   
+  title: string,
   directory: {
-    title: string, 
+    title: string,
     id: number
   },
   permissions: [
@@ -143,7 +144,7 @@ Deletes directory.
 ```
 
 Creates a new file and returns it. Also inherits permissions from parent directory where applicable. Parent directory is
-- root when ```directory.title = 'root'``` 
+- root when ```directory.title = 'root'```
 - specific directory when ```directory.id``` has a value of an existing directory ```id``` (which can also be root).
 
 ##GET /rest/directories/files/{id}
@@ -175,7 +176,7 @@ Returns file.
 ```
 
 Updates and returns file. Also inherits permissions from parent directory where applicable. Parent directory is
-- root when ```directory.title = 'root'``` 
+- root when ```directory.title = 'root'```
 - specific directory when ```directory.id``` has a value of an existing directory ```id``` (which can also be root).
 
 Creates a public URI for file when ```file.published = true``` or deletes the public URI when ```file.published = false```. Updates file contents when server-side ```file.md5Hash``` matches with supplied ```file.md5Hash``` and creates a new ```file.md5Hash```.
