@@ -57,7 +57,6 @@ var api = {
 };
 
 var user1 = {
-  "id": 4,
   "credentials": {
     "email": "test1@example.com",
     "password": "test1"
@@ -65,7 +64,6 @@ var user1 = {
 };
 
 var user2 = {
-  "id": 5,
   "credentials": {
     "email": "test2@example.com",
     "password": "test2"
@@ -73,7 +71,6 @@ var user2 = {
 };
 
 var user3 = {
-  "id": 6,
   "credentials": {
     "email": "test3@example.com",
     "password": "test3"
@@ -146,7 +143,6 @@ frisby.create("Login user with correct credentials")
         pobjects: [],
         permissions: [],
         user: {
-          id: user1.id,
           email: user1.credentials.email
         }
       })
@@ -224,7 +220,6 @@ frisby.create("Login user with correct credentials")
             title: fileCorrect.title,
             permissions: [],
             user: {
-              id: user1.id,
               email: user1.credentials.email
             },
             directory: {
@@ -280,9 +275,5 @@ frisby.create("Login user with correct credentials")
       })
     .toss();
 
-
-
-
   })
 .toss();
-
