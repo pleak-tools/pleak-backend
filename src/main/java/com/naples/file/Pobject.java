@@ -147,7 +147,31 @@ public class Pobject implements Comparable<Pobject> {
             permissions.add(np);
         }
     }
-
+    
+    public void deleteUserPermissions(Session session, Integer userId) {
+    	
+        Iterator<Permission> iter = permissions.iterator();
+        
+        while (iter.hasNext()) {
+        	
+            Permission p = iter.next();
+            
+            boolean userMatch = userId == p.getUser().getId();
+            
+            if (userMatch) {
+            	
+                iter.remove();
+                session.delete(p);
+                session.flush();
+                
+                break;
+                
+            }
+            
+        }
+        
+    }
+    
     @Override
     public int compareTo(Pobject pobject) {
         return this.id-pobject.getId();
