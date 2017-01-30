@@ -597,4 +597,35 @@ public class FileService {
             session.close();
         }
     }
+    
+    @DELETE
+    @Path("/files/permissions/{id}")
+    public Response deleteUserPermissions(@PathParam("id") int id, @Context ContainerRequestContext crc) {
+    	
+        int userId = (int) crc.getProperty("userId");
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        try {
+        	
+        	File file = (File) session.get(File.class, id);
+        	file.deleteUserPermissions(session, userId);
+        	
+            session.getTransaction().commit();
+        	
+            return Response.noContent().status(200).build();
+            
+        } catch(Exception e) {
+        	
+            //e.printStackTrace();
+            return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
+            
+        } finally {
+        	
+            session.close();
+            
+        }
+        
+    }
+    
 }
