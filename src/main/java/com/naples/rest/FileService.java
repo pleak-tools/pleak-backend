@@ -367,6 +367,7 @@ public class FileService {
                 dbFile.inheritPermissions(session);
             }
             dbFile.setLastModified(new Date());
+            dbFile.setModifiedBy(user);
 
             session.save(dbFile);
             session.getTransaction().commit();
@@ -463,6 +464,8 @@ public class FileService {
                 dbFile.setPublished(false);
                 dbFile.setDirectory(parent);
                 dbFile.setLastModified(new Date());
+                dbFile.setModifiedBy(user);
+                
                 if (user.getRoot() != parent) {
                     dbFile.inheritPermissions(session);
                 }
@@ -520,7 +523,10 @@ public class FileService {
                 }
             }
 
-            if (changesMade) dbFile.setLastModified(new Date());
+            if (changesMade) {
+            	dbFile.setLastModified(new Date());
+            	dbFile.setModifiedBy(user);
+            }
 
             session.save(dbFile);
             session.getTransaction().commit();

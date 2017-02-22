@@ -12,6 +12,7 @@ public class JsonFile extends JsonPobject implements java.io.Serializable {
     Boolean published;
     String uri;
     Long lastModified;
+    JsonUser modifiedBy;
     String md5Hash;
 
     public JsonFile() {}
@@ -23,6 +24,7 @@ public class JsonFile extends JsonPobject implements java.io.Serializable {
         this.content = file.getContent();
 
         this.lastModified = file.getLastModified().getTime();
+        this.modifiedBy = new JsonUser(file.getModifiedBy());
         this.md5Hash = file.getMD5Hash();
 
         this.directory = new JsonDirectory();
@@ -42,6 +44,13 @@ public class JsonFile extends JsonPobject implements java.io.Serializable {
     }
     public void setLastModified(Long lastModified) {
         this.lastModified = lastModified;
+    }
+    
+    public JsonUser getModifiedBy() {
+        return modifiedBy;
+    }
+    public void setModifiedBy(JsonUser modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public String getMD5Hash() {

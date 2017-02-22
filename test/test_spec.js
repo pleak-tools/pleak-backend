@@ -37,7 +37,7 @@ var reporter = new SpecReporter({
 
 jasmine.getEnv().addReporter(reporter);
 
-var host = "http://192.168.74.126:8080/pleak-backend/rest";
+var host = "http://localhost:8080/pleak-backend/rest";
 
 var api = {
   auth: {
@@ -213,6 +213,7 @@ frisby.create("Login user with correct credentials")
             user: Object,
             published: Boolean,
             lastModified: Number,
+            modifiedBy: Object,
             md5Hash: String,
             directory: Object
            })
