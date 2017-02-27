@@ -24,7 +24,10 @@ public class JsonFile extends JsonPobject implements java.io.Serializable {
         this.content = file.getContent();
 
         this.lastModified = file.getLastModified().getTime();
-        this.modifiedBy = new JsonUser(file.getModifiedBy());
+
+        this.modifiedBy = new JsonUser();
+        if (file.getModifiedBy() != null) this.modifiedBy = new JsonUser(file.getModifiedBy());
+
         this.md5Hash = file.getMD5Hash();
 
         this.directory = new JsonDirectory();
