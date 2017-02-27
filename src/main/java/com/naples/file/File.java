@@ -26,6 +26,7 @@ public class File extends Pobject {
     // Other
     Path path;
     Date lastModified;
+    User modifiedBy;
     String md5Hash;
     String content;
 
@@ -39,6 +40,13 @@ public class File extends Pobject {
     }
     public void loadLastModified() {
         this.lastModified = this.fh.getFileLastModifiedDate(path);
+    }
+    
+    public User getModifiedBy() {
+        return modifiedBy;
+    }
+    public void setModifiedBy(User modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
     public String getMD5Hash() {

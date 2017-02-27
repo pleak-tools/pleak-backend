@@ -39,6 +39,9 @@
             <property name="lastModified" type="timestamp">
                 <column name="last_modified"/>
             </property>
+            <many-to-one name="modifiedBy" class="com.naples.user.User" fetch="select">
+                <column name="modified_by" />
+            </many-to-one>
         </subclass>
 
         <subclass name="com.naples.file.Directory" extends="Pobject" discriminator-value="2">

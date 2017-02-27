@@ -213,6 +213,7 @@ frisby.create("Login user with correct credentials")
             user: Object,
             published: Boolean,
             lastModified: Number,
+            modifiedBy: Object,
             md5Hash: String,
             directory: Object
            })
