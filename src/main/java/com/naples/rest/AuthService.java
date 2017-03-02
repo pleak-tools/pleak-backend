@@ -29,6 +29,7 @@ import com.naples.helper.Token;
 import com.naples.util.HibernateUtil;
 import com.naples.util.KeyUtil;
 import com.naples.user.User;
+import com.naples.user.UserHelper;
 
 @Path("/auth")
 public class AuthService {
@@ -45,8 +46,12 @@ public class AuthService {
   public Response register(User user) {
     Session session = HibernateUtil.getSessionFactory().openSession();
     session.beginTransaction();
+    UserHelper uh = new UserHelper();
 
     try {
+      if (!uh.isValidPassword(user.getPassword())) {
+        return Response.status(400).entity(new Error("Invalid password.")).build();
+      }
       user.createHashedPassword(user.getPassword());
       session.save(user);
       Key key = KeyUtil.getKey();
