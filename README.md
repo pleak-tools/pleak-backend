@@ -72,7 +72,7 @@ If jasmine-node is not installed:
 
 Automated tests
 
-```jasmine-node test-spec.js```
+```jasmine-node test_spec.js```
 
 # API
 
