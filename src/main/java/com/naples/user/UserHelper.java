@@ -8,7 +8,7 @@ public class UserHelper {
   public boolean isValidPassword(String password) {
     String LETTERS = "^((?=.*[a-z])|(?=.*[A-Z]))";
     String NUMBERS = "(?=.*[0-9])";
-    String LENGTH = "(?=.{8,})";
+    String LENGTH = "(?=.{10,})";
 
     Pattern pattern = Pattern.compile(LETTERS + NUMBERS + LENGTH);
 
