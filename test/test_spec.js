@@ -236,18 +236,18 @@ frisby.create("Login user with correct credentials")
               .put(api.file.new + body.id, renamedFile, {json: true})
               .expectStatus(200)
               .after(function (error, response, body) {
+                var editedFile = JSON.parse(JSON.stringify(renamedFile)); // Copy
+                editedFile.content = "some content";
+                frisby.create("Check if user1 can edit the created model")
+                  .put(api.file.new + body.id, editedFile, {json: true})
+                  .expectStatus(200)
+                  .after(function (error, response, body) {
+                  })
+                .toss();
               })
             .toss();
 
 
-            var editedFile = JSON.parse(JSON.stringify(renamedFile)); // Copy
-            editedFile.content = "some content";
-            frisby.create("Check if user1 can edit the created model")
-              .put(api.file.new + body.id, editedFile, {json: true})
-              .expectStatus(200)
-              .after(function (error, response, body) {
-              })
-            .toss();
 
             var copyFile = renamedFile;
             frisby.create("Check if user1 can copy the created model")
