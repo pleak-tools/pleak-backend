@@ -236,7 +236,7 @@ frisby.create("Login user with correct credentials")
               .put(api.file.new + body.id, renamedFile, {json: true})
               .expectStatus(200)
               .after(function (error, response, body) {
-                var editedFile = JSON.parse(JSON.stringify(renamedFile)); // Copy
+                var editedFile = JSON.parse(JSON.stringify(body)); // Copy
                 editedFile.content = "some content";
                 frisby.create("Check if user1 can edit the created model")
                   .put(api.file.new + body.id, editedFile, {json: true})
