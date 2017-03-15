@@ -80,7 +80,7 @@ var user3 = {
 var blocked = {
   "credentials": {
     "email": "blocked@example.com",
-    "password": "test3"
+    "password": "blocked"
   }
 };
 
