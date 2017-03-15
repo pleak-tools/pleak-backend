@@ -13,6 +13,7 @@ public class User {
 
   // Database
   Integer id;
+  Integer blocked;
   String email;
   String password;
   Set<Pobject> pobjects = new HashSet<Pobject>(0);
@@ -31,6 +32,13 @@ public class User {
   }
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public Integer getBlocked() {
+    return blocked;
+  }
+  public void setBlocked(Integer status) {
+    this.blocked = status;
   }
 
   public String getEmail() {

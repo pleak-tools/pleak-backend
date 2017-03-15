@@ -77,6 +77,13 @@ var user3 = {
   }
 };
 
+var blocked = {
+  "credentials": {
+    "email": "blocked@example.com",
+    "password": "test3"
+  }
+};
+
 var updateJwt = function(jwt) {
   frisby.globalSetup({
     request: {
@@ -108,6 +115,13 @@ frisby.create("Login user with wrong email")
 frisby.create("Login user with wrong password")
   .post(api.auth.login, {"email": user1.credentials.email, "password": "asd"}, {json: true})
   .expectStatus(403)
+  .after(function (error, response, body) {
+  })
+.toss();
+
+frisby.create("Login user with blocked account")
+  .post(api.auth.login, blocked.credentials, {json: true})
+  .expectStatus(401)
   .after(function (error, response, body) {
   })
 .toss();

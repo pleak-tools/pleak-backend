@@ -6,6 +6,7 @@ public class JsonUser implements Comparable<JsonUser>, java.io.Serializable {
 
   // Database
   Integer id;
+  Integer blocked;
   String email;
 
   public JsonUser() {}
@@ -21,6 +22,14 @@ public class JsonUser implements Comparable<JsonUser>, java.io.Serializable {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public Integer getBlocked() {
+    return blocked;
+  }
+
+  public void setBlocked(Integer status) {
+    this.blocked = status;
   }
 
   public String getEmail() {

@@ -16,6 +16,10 @@
       <column name="password" not-null="true"/>
     </property>
 
+    <property name="blocked" type="java.lang.Integer">
+      <column name="blocked"/>
+    </property>
+
     <set name="pobjects" table="pobjects" inverse="true" lazy="false" fetch="select" cascade="delete">
       <key>
         <column name="user_id" not-null="true"/>

@@ -25,6 +25,7 @@ import org.hibernate.Session;
 import org.hibernate.Filter;
 import org.hibernate.HibernateException;
 
+import com.naples.bcrypt.BCrypt;
 import com.naples.helper.Token;
 import com.naples.util.HibernateUtil;
 import com.naples.util.KeyUtil;
@@ -96,7 +97,13 @@ public class AuthService {
       }
 
       User dbUser = (User) users.get(0);
+
       if (dbUser.isCorrectPassword(user.getPassword())) {
+
+        if (dbUser.getBlocked() != 0) {
+          return Response.status(401).entity(new Error("Unauthorized.")).build();
+        }
+
         Key key = KeyUtil.getKey();
         String jwToken = Jwts.builder().setSubject(dbUser.getId().toString())
                                        .claim("email", dbUser.getEmail())
