@@ -19,6 +19,8 @@ INSERT IGNORE INTO users (email, password) VALUES ('test2@example.com', '$2a$12$
 INSERT IGNORE INTO users (email, password) VALUES ('test3@example.com', '$2a$12$Q/CNyytuuCmX3YC.oS2d/un42zs.STRa7Zqwbm1MryleA/6lEwqBy');
 
 INSERT IGNORE INTO users (email, password, blocked) VALUES ('blocked@example.com', '$2a$12$Up3lOd/PRSLq649QbPr75O7aK/o1m4eaZP.Jx73tjh4iBhoco2KI2', 1);
+INSERT IGNORE INTO users (email, password) VALUES ('changepassword1@example.com', '$2a$12$scdd8isaDYDZ6u3pvZKUeO7h5EJ5bmgxrlFHwEEoMYDh/ln.O4cVu');
+
 
 
 # Create root directories for all users
@@ -46,15 +48,19 @@ CREATE PROCEDURE create_root_directories()
       INSERT INTO pobjects (title, user_id, type_id) SELECT DISTINCT 'root', id, 2 FROM users
       WHERE email = 'test2@example.com';
     END IF;
-      IF NOT EXISTS (select * from pobjects AS p JOIN users AS u ON p.user_id = u.id WHERE u.email = 'test3@example.com') THEN
-        INSERT INTO pobjects (title, user_id, type_id) SELECT DISTINCT 'root', id, 2 FROM users
-        WHERE email = 'test3@example.com';
-      END IF;
-      IF NOT EXISTS (select * from pobjects AS p JOIN users AS u ON p.user_id = u.id WHERE u.email = 'blocked@example.com') THEN
-         INSERT INTO pobjects (title, user_id, type_id) SELECT DISTINCT 'root', id, 2 FROM users
-         WHERE email = 'blocked@example.com';
-      END IF;
-    END
+    IF NOT EXISTS (select * from pobjects AS p JOIN users AS u ON p.user_id = u.id WHERE u.email = 'test3@example.com') THEN
+      INSERT INTO pobjects (title, user_id, type_id) SELECT DISTINCT 'root', id, 2 FROM users
+      WHERE email = 'test3@example.com';
+    END IF;
+    IF NOT EXISTS (select * from pobjects AS p JOIN users AS u ON p.user_id = u.id WHERE u.email = 'blocked@example.com') THEN
+      INSERT INTO pobjects (title, user_id, type_id) SELECT DISTINCT 'root', id, 2 FROM users
+      WHERE email = 'blocked@example.com';
+    END IF;
+    IF NOT EXISTS (select * from pobjects AS p JOIN users AS u ON p.user_id = u.id WHERE u.email = 'changepassword1@example.com') THEN
+      INSERT INTO pobjects (title, user_id, type_id) SELECT DISTINCT 'root', id, 2 FROM users
+      WHERE email = 'changepassword1@example.com';
+    END IF;
+  END
 $$
 
 call create_root_directories();
