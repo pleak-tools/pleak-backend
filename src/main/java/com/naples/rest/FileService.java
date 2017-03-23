@@ -504,7 +504,7 @@ public class FileService {
                 }
 
                 // New permissions
-                if (file.getId() == dbFile.getId()) {
+                if (file.getId().equals(dbFile.getId())) {
                     boolean permissionsUpdated = dbFile.updatePermissions(file, session);
                     if (!changesMade && permissionsUpdated) changesMade = true;
                 }

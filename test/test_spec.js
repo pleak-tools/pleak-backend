@@ -56,7 +56,8 @@ var api = {
     delete: host + "/directories/files/permissions/"
   },
   user: {
-    password: host + "/user/password"
+    password: host + "/user/password",
+    exists: host + "/user/exists"
   }
 };
 
@@ -306,18 +307,33 @@ var user1Tests = frisby.create("Login user with correct credentials")
               })
             .toss();
 
+            var nonExistingUser = {
+              "credentials": {
+                "email": "nonExistingUser@example.com",
+                "password": "nonexistinguser"
+              }
+            };
             var sharedFileNonExistingUser = JSON.parse(JSON.stringify(body));
             sharedFileNonExistingUser.permissions = [{
               action: {
                 title: "view"
               },
               user: {
-                email: "nonExistingUser@example.com"
+                email: nonExistingUser.credentials.email
               }
             }];
-            frisby.create("Check if user1 can share the created model with non-existing user")
-              .put(api.file.new + body.id, sharedFileNonExistingUser, {json: true})
-              .expectStatus(400)
+            frisby.create("Check if user exists")
+              .post(api.user.exists, nonExistingUser.credentials, {json: true})
+              .expectStatus(404)
+              .after(function (error, response, body) {
+
+                frisby.create("Check if user1 can share the created model with non-existing user")
+                  .put(api.file.new + body.id, sharedFileNonExistingUser, {json: true})
+                  .expectStatus(400)
+                  .expectMaxResponseTime(500)
+                .toss();
+
+              })
             .toss();
 
             var sharedFileExistingUserView = JSON.parse(JSON.stringify(body));
@@ -363,26 +379,25 @@ var user1Tests = frisby.create("Login user with correct credentials")
                               .expectStatus(403)
                               .after(function (error, response, body) {
 
-                                frisby.create("Log out (from user2 account)")
-                                  .get(api.auth.logout)
+                                frisby.create("Remove sharing of a model")
+                                  .delete(api.file.delete + sharedFile.id)
                                   .expectStatus(200)
                                   .after(function (error, response, body) {
 
-                                    frisby.create("Login user1 with correct credentials to remove sharing of a model")
-                                      .post(api.auth.login, user1.credentials, {json: true})
-                                      .expectStatus(200)
-                                      .expectJSONTypes({
-                                        token: String,
-                                      })
+                                    frisby.create("Check if user2 can view the not shared model")
+                                      .get(api.file.new + sharedFile.id)
+                                      .expectStatus(403)
                                       .after(function (error, response, body) {
-                                        updateJwt(body.token);
 
-                                        frisby.create("Remove sharing of a model")
-                                          .delete(api.file.delete + sharedFile.id)
-                                          .expectStatus(200)
+                                        var editedFile = JSON.parse(JSON.stringify(sharedFile)); // Copy
+                                        editedFile.content = "some new content";
+
+                                        frisby.create("Check if user2 can edit the not shared model")
+                                          .put(api.file.new + sharedFile.id, editedFile, {json: true})
+                                          .expectStatus(403)
                                           .after(function (error, response, body) {
 
-                                            frisby.create("Log out (from user1 account)")
+                                            frisby.create("Log out (from user2 account)")
                                               .get(api.auth.logout)
                                               .expectStatus(200)
                                             .toss();
@@ -470,6 +485,7 @@ var user1Tests = frisby.create("Login user with correct credentials")
                     email: user2.credentials.email
                   }
                 }];
+
                 frisby.create("Check if user1 can share the created model (permissions: edit) with existing user (user2)")
                   .put(api.file.new + body.id, sharedFileExistingUserEdit, {json: true})
                   .expectStatus(200)
@@ -574,26 +590,159 @@ var user1Tests = frisby.create("Login user with correct credentials")
           .expectStatus(200)
           .after(function (error, response, body) {
 
-          var renamedDirectory = body;
-          renamedDirectory.title = "renamedDirectory";
-          frisby.create("Check if user1 can rename the created directory")
-            .put(api.directory.new + body.id, renamedDirectory, {json: true})
-            .expectStatus(200)
-          .toss();
+            var renamedDirectory = body;
+            renamedDirectory.title = "renamedDirectory";
+            frisby.create("Check if user1 can rename the created directory")
+              .put(api.directory.new + body.id, renamedDirectory, {json: true})
+              .expectStatus(200)
+            .toss();
 
-          var copyDirectory = renamedDirectory;
-          frisby.create("Check if user1 can copy the created directory")
-            .post(api.directory.new, copyDirectory, {json: true})
-            .expectStatus(200)
-            .after(function (error, response, body) {
+            var copyDirectory = renamedDirectory;
+            frisby.create("Check if user1 can copy the created directory")
+              .post(api.directory.new, copyDirectory, {json: true})
+              .expectStatus(200)
+              .after(function (error, response, body) {
 
-              frisby.create("Check if user1 can delete the copied directory")
-                .delete(api.directory.new + body.id)
-                .expectStatus(200)
-              .toss();
+                frisby.create("Check if user1 can delete the copied directory")
+                  .delete(api.directory.new + body.id)
+                  .expectStatus(200)
+                .toss();
 
-            })
-          .toss();
+              })
+            .toss();
+
+            var createdDirectory = body;
+
+            frisby.create("Log out (from user1 account)")
+              .get(api.auth.logout)
+              .expectStatus(200)
+              .after(function (error, response, body) {
+
+                frisby.create("Login user2 with correct credentials to rename, copy and delete created directory")
+                  .post(api.auth.login, user2.credentials, {json: true})
+                  .expectStatus(200)
+                  .expectJSONTypes({
+                    token: String,
+                  })
+                  .after(function (error, response, body) {
+                    updateJwt(body.token);
+
+                    var renamedDirectory = createdDirectory;
+                    renamedDirectory.title = "renamedDirectory2";
+                    frisby.create("Check if user2 can rename the created directory ")
+                      .put(api.directory.new + createdDirectory.id, renamedDirectory, {json: true})
+                      .expectStatus(403)
+                      .after(function (error, response, body) {
+
+                        frisby.create("Check if user2 can copy the created directory")
+                          .post(api.directory.new, createdDirectory, {json: true})
+                          .expectStatus(403)
+                          .after(function (error, response, body) {
+
+                            frisby.create("Check if user2 can delete the copied directory")
+                              .delete(api.directory.new + createdDirectory.id)
+                              .expectStatus(403)
+                              .after(function (error, response, body) {
+
+                                frisby.create("Log out (from user2 account)")
+                                  .get(api.auth.logout)
+                                  .expectStatus(200)
+                                .toss();
+
+                              })
+                            .toss();
+
+                          })
+                        .toss();
+
+                      })
+                    .toss();
+
+                  })
+                .toss();
+
+              })
+            .toss();
+
+            var sharedDirectoryExistingUserEdit = JSON.parse(JSON.stringify(createdDirectory));
+            sharedDirectoryExistingUserEdit.permissions = [{
+              action: {
+                title: "edit"
+              },
+              user: {
+                email: user3.credentials.email
+              }
+            }];
+            frisby.create("Check if user1 can share the created directory (permissions: edit) with existing user (user3)")
+              .put(api.directory.new + createdDirectory.id, sharedDirectoryExistingUserEdit, {json: true})
+              .expectStatus(200)
+              .after(function (error, response, body) {
+
+                var sharedDirectory = body;
+
+                frisby.create("Log out (from user1 account)")
+                  .get(api.auth.logout)
+                  .expectStatus(200)
+                  .after(function (error, response, body) {
+
+                    frisby.create("Login user2 with correct credentials to copy the created directory")
+                      .post(api.auth.login, user2.credentials, {json: true})
+                      .expectStatus(200)
+                      .expectJSONTypes({
+                        token: String,
+                      })
+                      .after(function (error, response, body) {
+                        updateJwt(body.token);
+
+                        frisby.create("Check if user2 can copy the created (not shared) directory")
+                          .post(api.directory.new, sharedDirectory, {json: true})
+                          .expectStatus(403)
+                          .after(function (error, response, body) {
+
+                            frisby.create("Log out (from user2 account)")
+                              .get(api.auth.logout)
+                              .expectStatus(200)
+                              .after(function (error, response, body) {
+
+                                frisby.create("Login user3 with correct credentials to copy the created directory")
+                                  .post(api.auth.login, user3.credentials, {json: true})
+                                  .expectStatus(200)
+                                  .expectJSONTypes({
+                                    token: String,
+                                  })
+                                  .after(function (error, response, body) {
+                                    updateJwt(body.token);
+
+                                    frisby.create("Check if user3 can copy the created (shared) directory")
+                                      .post(api.directory.new, sharedDirectory, {json: true})
+                                      .expectStatus(403)
+                                      .after(function (error, response, body) {
+
+                                        frisby.create("Log out (from user3 account)")
+                                          .get(api.auth.logout)
+                                          .expectStatus(200)
+                                        .toss();
+
+                                      })
+                                    .toss();
+
+                                  })
+                                .toss();
+
+                              })
+                            .toss();
+
+                          })
+                        .toss();
+
+                      })
+                    .toss();
+
+                  })
+                .toss();
+
+              })
+            .toss();
 
           })
         .toss();
