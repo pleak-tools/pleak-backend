@@ -45,7 +45,7 @@ public class SQLAnalyserService {
         String queryFileID = UUID.randomUUID().toString();
 
         // Command for SQL-analyser command-line tool to get sensitivities based on schema and query files
-        String command = analyser + "sqla -a " + analyser_files + schemaFileID + ".sql " + analyser_files + queryFileID
+        String command = analyser + "sqla -ap " + analyser_files + schemaFileID + ".sql " + analyser_files + queryFileID
                 + ".sql";
 
         String schemaString = "";
@@ -102,7 +102,7 @@ public class SQLAnalyserService {
 
             ArrayList<SQLAnalyserSensitivities> resultSet = new ArrayList<SQLAnalyserSensitivities>();
 
-            for (int i = 0; i <= parts.length - 1; i++) {
+            for (int i = 0; i <= parts.length - 3; i++) {
 
                 if ((i % 2) == 0) {
 
@@ -118,6 +118,16 @@ public class SQLAnalyserService {
             }
 
             sensitivities.setResultSet(resultSet);
+
+            String primaryKeysString = parts[parts.length-1].replaceAll("\\s+", "");
+            ArrayList<Integer> primaryKeysSet = new ArrayList<Integer>();
+
+            for (int j = 0; j < primaryKeysString.length(); j++) {
+                int key = Character.getNumericValue(primaryKeysString.charAt(j));
+                primaryKeysSet.add(key);
+            }
+
+            sensitivities.setPrimaryKeysSet(primaryKeysSet);
 
             return Response.ok(sensitivities).type(MediaType.APPLICATION_JSON).build();
 
