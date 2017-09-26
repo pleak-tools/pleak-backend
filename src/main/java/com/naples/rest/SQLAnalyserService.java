@@ -33,7 +33,7 @@ public class SQLAnalyserService {
     public Response analyse(SQLAnalyserDataObject object) {
 
         // Location of SQL-analyser command-line tool
-        String analyser = "../sql-analyser/";
+        String analyser = "../pleak-sql-analysis/";
 
         // Location of temporary sql files that are created for SQL-analyser command-line tool
         String analyser_files = "src/main/webapp/analyser_files/";

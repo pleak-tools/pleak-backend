@@ -186,3 +186,8 @@ Deletes file.
 
 ##GET /rest/directories/files/public/{uri}
 Returns public file.
+
+
+## License
+
+MIT
