@@ -45,7 +45,7 @@ public class SQLAnalyserService {
         String queryFileID = UUID.randomUUID().toString();
 
         // Command for SQL-analyser command-line tool to get sensitivities based on schema and query files
-        String command = analyser + "sqla -ap " + analyser_files + schemaFileID + ".sql " + analyser_files + queryFileID
+        String command = analyser + "sqla -ap -s-1 " + analyser_files + schemaFileID + ".sql " + analyser_files + queryFileID
                 + ".sql";
 
         String schemaString = "";
