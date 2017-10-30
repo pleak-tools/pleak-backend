@@ -1,7 +1,6 @@
 package com.naples.util;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;

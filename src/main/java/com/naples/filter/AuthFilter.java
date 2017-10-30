@@ -10,21 +10,15 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 
 import java.security.Key;
-import java.util.Base64;
-import java.util.Collection;
 
 import com.naples.helper.Error;
 import com.naples.util.KeyUtil;
-import com.naples.util.HibernateUtil;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
-import java.security.Key;
 
 @Provider
 public class AuthFilter implements ContainerRequestFilter {

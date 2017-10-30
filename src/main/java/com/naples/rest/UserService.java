@@ -40,7 +40,6 @@ public class UserService {
       if (users.size() == 0) {
         return Response.status(404).entity(new Error("User not found.")).build();
       }
-      User dbUser = (User) users.get(0);
 
       return Response.ok().build();
     } catch (Exception e) {

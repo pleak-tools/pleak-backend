@@ -6,8 +6,6 @@ import java.util.Random;
 public class RandomStringGenerator implements FilePublicUriGenerator {
     private int length = 15;
 
-    private char[] VALID_CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456879".toCharArray();
-
     public String getUri() {
         byte[] bytes = new byte[this.length];
         new Random().nextBytes(bytes);

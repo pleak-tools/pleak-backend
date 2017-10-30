@@ -1,18 +1,13 @@
 package com.naples.file;
 
 import javax.servlet.ServletContext;
-import javax.ws.rs.core.Context;
 import java.io.IOException;
 import java.nio.file.*;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Iterator;
 import java.util.Date;
 
-import com.naples.generator.FilePublicUriGenerator;
 import com.naples.user.User;
-import com.naples.helper.Action;
 
 public class File extends Pobject {
 
@@ -118,6 +113,21 @@ public class File extends Pobject {
                 if (p.getUser().getId() == userId &&
                     (p.getAction().getTitle().equals("view") ||
                      p.getAction().getTitle().equals("edit")) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean canBeEditedBy(int userId) {
+        if (this.user.getId() == userId) {
+            return true;
+        } else {
+            Iterator iterator = permissions.iterator();
+            while (iterator.hasNext()) {
+                Permission p = (Permission)iterator.next();
+                if (p.getUser().getId() == userId && p.getAction().getTitle().equals("edit")) {
                     return true;
                 }
             }

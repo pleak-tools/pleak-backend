@@ -8,7 +8,6 @@ import java.util.Iterator;
 import org.hibernate.Session;
 import org.hibernate.Filter;
 
-import com.naples.util.HibernateUtil;
 import com.naples.user.User;
 import com.naples.helper.Action;
 import com.naples.json.JsonPobject;
@@ -129,7 +128,13 @@ public class Pobject implements Comparable<Pobject> {
 
     public void inheritPermissions(Session session) {
         session.save(this);
+        Permission tmp = new Permission();
+        Boolean flag = false;
         for (Permission p : permissions) {
+            if (p.getUser().getId() == directory.getUser().getId() && p.getUser().getId() != user.getId()) {
+                tmp = p;
+                flag = true;
+            }
             session.delete(p);
         }
         permissions.clear();
@@ -145,6 +150,10 @@ public class Pobject implements Comparable<Pobject> {
             np.setPobject(this);
             session.save(np);
             permissions.add(np);
+        }
+        if (flag) {
+            session.save(tmp);
+            permissions.add(tmp);
         }
     }
     

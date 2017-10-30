@@ -2,15 +2,11 @@ package com.naples.rest;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.security.Key;
-import java.util.Base64;
-import java.util.Base64.Encoder;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
@@ -25,7 +21,6 @@ import org.hibernate.Session;
 import org.hibernate.Filter;
 import org.hibernate.HibernateException;
 
-import com.naples.bcrypt.BCrypt;
 import com.naples.helper.Token;
 import com.naples.util.HibernateUtil;
 import com.naples.util.KeyUtil;
@@ -128,7 +123,6 @@ public class AuthService {
   @GET
   @Path("/logout")
   public Response logout(@Context ContainerRequestContext crc) {
-    int userId = (int) crc.getProperty("userId");
     Response resp = Response.status(200).entity(new Token("")).build();
     return resp;
   }

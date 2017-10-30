@@ -15,7 +15,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Context;
@@ -24,7 +23,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.annotation.security.PermitAll;
 
 import org.hibernate.Session;
-import org.hibernate.Filter;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -229,7 +227,7 @@ public class FileService {
 
                 if (parent == null) {
                     return Response.status(404).entity(new Error("Parent directory not found.")).type(MediaType.APPLICATION_JSON).build();
-                } else if (parent.getUser() != user) {
+                } else if (parent.getUser() != user && !user.canEdit(dbDir)) {
                     return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
                 } else {
                     dbDir = new Directory();
@@ -240,7 +238,7 @@ public class FileService {
                         dbDir.inheritPermissions(session);
                     }
                 }
-            } else if (dbDir.getUser() != user) {
+            } else if (dbDir.getUser() != user && !user.canEdit(dbDir) && dbDir.getDirectory().getUser() != user) {
                 return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
             }
 
@@ -340,7 +338,7 @@ public class FileService {
 
             if (parent == null) {
                 return Response.status(404).entity(new Error("Parent directory not found.")).type(MediaType.APPLICATION_JSON).build();
-            } else if (parent.getUser().getId() != userId) {
+            } else if (parent.getUser().getId() != userId && !parent.canBeEditedBy(userId) && !parent.canBeViewedBy(userId)) {
                 return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
             }
 
@@ -351,7 +349,7 @@ public class FileService {
             if (oldFile != null) {
                 oldFile.build(context);
                 oldFile.loadContent();
-                if (oldFile.getUser() == user || user.canEdit(oldFile) || user.canView(oldFile)) {
+                if (oldFile.getUser() == user || user.canEdit(oldFile) || user.canView(oldFile) || oldFile.getDirectory().getUser() == user) {
                     dbFile.setContent(oldFile.getContent());
                 } else {
                     return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
@@ -396,7 +394,7 @@ public class FileService {
         try {
             File file = (File) session.get(File.class, id);
 
-            if (!file.canBeViewedBy(userId)) {
+            if (!file.canBeViewedBy(userId) && file.getDirectory().getUser().getId() != userId) {
                 return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
             }
 
@@ -453,8 +451,8 @@ public class FileService {
             }
 
             if (dbFile == null) {
-                if (parent.getUser().getId() != userId) {
-                    Error er = new Error("Forbidden: file's directory owner must match with file's owner.");
+                if (parent.getUser().getId() != userId && !parent.canBeEditedBy(userId) && !user.canEdit(dbFile)) {
+                    Error er = new Error("Forbidden: file's directory owner must match with file's owner OR user must have edit rights for directory and file.");
                     return Response.status(403).entity(er).type(MediaType.APPLICATION_JSON).build();
                 }
                 dbFile = new File();
@@ -477,7 +475,7 @@ public class FileService {
             }
 
             // If existing file can't be edited by user
-            if (dbFile.getUser().getId() != userId && !user.canEdit(dbFile)) {
+            if (dbFile.getUser().getId() != userId && !dbFile.getDirectory().canBeEditedBy(userId) && !user.canEdit(dbFile)) {
                 Error er = new Error("Forbidden: user is not owner and has no permissions.");
                 return Response.status(403).entity(er).type(MediaType.APPLICATION_JSON).build();
             }
@@ -490,10 +488,10 @@ public class FileService {
                 if (!changesMade) changesMade = true;
             }
 
-            // Only if owner
-            if (dbFile.getUser().getId() == userId) {
+            // If owner OR someone with edit rights for the file's parent folder
+            if (dbFile.getUser().getId() == userId || user.canEdit(dbFile) || (user.canEdit(dbFile) && parent.canBeEditedBy(userId)) || dbFile.getDirectory().canBeEditedBy(userId)) {
                 // New title
-                if (!file.getTitle().equals(dbFile.getTitle())) {
+                if (!file.getTitle().equals(dbFile.getTitle()) && (parent.canBeEditedBy(userId) || user.canEdit(dbFile) || file.getUser().getId() == userId && dbFile.getUser().getId() == userId)) {
                     dbFile.setTitle(file.getTitle());
                     if (!changesMade) changesMade = true;
                 }
@@ -551,13 +549,12 @@ public class FileService {
     @Path("/files/{id}")
     public Response deleteFile(@PathParam("id") int id, @Context ContainerRequestContext crc) {
         int userId = (int) crc.getProperty("userId");
-        FileHelper fh = new FileHelper();
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
 
         try {
             File file = (File) session.get(File.class, id);
-            if (file.getUser().getId() != userId) {
+            if (file.getUser().getId() != userId && !file.canBeEditedBy(userId) && (file.getDirectory()).getUser().getId() != userId) {
                 return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
             }
             file.build(context);

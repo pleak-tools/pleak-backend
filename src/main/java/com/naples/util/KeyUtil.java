@@ -1,7 +1,5 @@
 package com.naples.util;
 
-import javax.annotation.PostConstruct;
-
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.security.Key;
 

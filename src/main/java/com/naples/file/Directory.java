@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class Directory extends Pobject {
@@ -72,6 +73,38 @@ public class Directory extends Pobject {
         for (Pobject pob : pobjects) {
             pob.inheritPermissions(session);
         }
+    }
+
+    public boolean canBeViewedBy(int userId) {
+        if (this.user.getId() == userId) {
+            return true;
+        } else {
+            Iterator iterator = permissions.iterator();
+            while (iterator.hasNext()) {
+                Permission p = (Permission)iterator.next();
+                if (p.getUser().getId() == userId &&
+                    (p.getAction().getTitle().equals("view") ||
+                     p.getAction().getTitle().equals("edit")) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean canBeEditedBy(int userId) {
+        if (this.user.getId() == userId) {
+            return true;
+        } else {
+            Iterator iterator = permissions.iterator();
+            while (iterator.hasNext()) {
+                Permission p = (Permission)iterator.next();
+                if (p.getUser().getId() == userId && p.getAction().getTitle().equals("edit") ) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
