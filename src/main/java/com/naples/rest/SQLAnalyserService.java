@@ -169,7 +169,7 @@ public class SQLAnalyserService {
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
 
         // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on query, nrm and db files
-        String command = analyser + "banach -a " + analyser_files + queriesFileID + ".txt " + epsilon + " " + beta + "";
+        String command = analyser + "banach -a demo_schema.sql " + analyser_files + queriesFileID + ".txt " + epsilon + " " + beta + "";
 
         try {
 

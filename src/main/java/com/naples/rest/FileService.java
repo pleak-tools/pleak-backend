@@ -102,7 +102,7 @@ public class FileService {
             Directory newDir = null;
             if (parent == null) {
                 return Response.status(404).entity(new Error("Parent directory not found.")).type(MediaType.APPLICATION_JSON).build();
-            } else if (parent.getUser().getId() != userId) {
+            } else if (parent.getUser().getId() != userId && !parent.canBeEditedBy(userId)) {
                 return Response.status(403).entity(new Error("Forbidden.")).type(MediaType.APPLICATION_JSON).build();
             } else {
                 newDir = new Directory();
