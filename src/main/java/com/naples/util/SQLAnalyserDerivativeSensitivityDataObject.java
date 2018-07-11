@@ -6,6 +6,7 @@ public class SQLAnalyserDerivativeSensitivityDataObject {
     String name;
     String nrm;
     String db;
+    String schema;
 
     public String getId() {
         return this.id;
@@ -37,6 +38,14 @@ public class SQLAnalyserDerivativeSensitivityDataObject {
 
     public void setDB(String db) {
         this.db = db;
+    }
+
+    public String getSchema() {
+        return this.schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
     }
 
 }

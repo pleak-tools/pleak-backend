@@ -6,6 +6,7 @@ public class SQLAnalyserDerivativeSensitivityObject {
 
     List<SQLAnalyserDerivativeSensitivityDataObject> children;
     String queries;
+    String schemas;
     String epsilon;
     String beta;
 
@@ -23,6 +24,14 @@ public class SQLAnalyserDerivativeSensitivityObject {
 
     public void setQueries(String queries) {
         this.queries = queries;
+    }
+
+    public String getSchemas() {
+        return this.schemas;
+    }
+
+    public void setSchemas(String schemas) {
+        this.schemas = schemas;
     }
 
     public String getEpsilon() {

@@ -163,24 +163,34 @@ public class SQLAnalyserService {
 
         String queriesFileID = UUID.randomUUID().toString();
 
+        String schemasFileID = UUID.randomUUID().toString();
+
         StringBuffer output = new StringBuffer();
 
         String beta = "--beta " + Float.parseFloat(object.getBeta());
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
 
         // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on query, nrm and db files
-        String command = analyser + "banach -a demo_schema.sql " + analyser_files + queriesFileID + ".txt " + epsilon + " " + beta + "";
+        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + epsilon + " " + beta + "";
 
         try {
 
             String queriesString = object.getQueries();
+            String schemasString = object.getSchemas();
 
-            File queriesFile = new File(analyser_files + queriesFileID + ".txt");
+            File queriesFile = new File(analyser_files + queriesFileID + ".sql");
             FileOutputStream is0 = new FileOutputStream(queriesFile);
             OutputStreamWriter osw0 = new OutputStreamWriter(is0);
             Writer w0 = new BufferedWriter(osw0);
             w0.write(queriesString);
             w0.close();
+
+            File schemasFile = new File(analyser_files + schemasFileID + ".sql");
+            FileOutputStream is0_2 = new FileOutputStream(schemasFile);
+            OutputStreamWriter osw0_2 = new OutputStreamWriter(is0_2);
+            Writer w0_2 = new BufferedWriter(osw0_2);
+            w0_2.write(schemasString);
+            w0_2.close();
 
             for (SQLAnalyserDerivativeSensitivityDataObject tempObj : object.getChildren()) {
                 String name = tempObj.getName();
@@ -250,8 +260,11 @@ public class SQLAnalyserService {
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             // Delete temporary files after use
-            File queriesFile = new File(analyser_files + queriesFileID + ".txt");
+            File queriesFile = new File(analyser_files + queriesFileID + ".sql");
             queriesFile.delete();
+
+            File schemasFile = new File(analyser_files + schemasFileID + ".sql");
+            schemasFile.delete();
 
             for (SQLAnalyserDerivativeSensitivityDataObject tempObj : object.getChildren()) {
                 String name = tempObj.getName();
