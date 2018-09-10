@@ -24,7 +24,8 @@ import com.naples.util.SQLAnalyserSchemaObject;
 import com.naples.util.SQLAnalyserSensitivities;
 import com.naples.util.SQLAnalyserSensitivitiesObject;
 import com.naples.util.SQLAnalyserDerivativeSensitivityObject;
-import com.naples.util.SQLAnalyserDerivativeSensitivityDataObject;
+import com.naples.util.SQLAnalyserPolicyObject;
+import com.naples.util.SQLAnalyserDerivativeSensitivityAndPolicyDataObject;
 import com.naples.util.SQLAnalyserDerivativeSensitivityResultObject;
 
 @Path("/sql-privacy")
@@ -150,6 +151,150 @@ public class SQLAnalyserService {
     }
 
     @POST
+    @Path("/analyze-policy")
+    @PermitAll
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response analyzePolicy(SQLAnalyserPolicyObject object) {
+
+        // Location of SQL derivative sensitivity (and policy) analyser command-line tool
+        String analyser = "../pleak-sql-analysis/banach/dist/build/banach/";
+
+        // Location of temporary sql, att, plc and db files that are created for analyser command-line tool
+        String analyser_files = "src/main/webapp/derivative_analyser_files/";
+
+        String queriesFileID = UUID.randomUUID().toString();
+
+        String schemasFileID = UUID.randomUUID().toString();
+
+        String attackerSettingsFileID = UUID.randomUUID().toString();
+
+        StringBuffer output = new StringBuffer();
+
+        String beta = "--beta 0.2"; // + Float.parseFloat(object.getBeta());
+        String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
+
+        // Command for SQL derivative sensitivity (and policy) analyser command-line tool to get results based on schemas, queries, attacker settings, plc and db files
+        String command = analyser + "banach -QDpa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att " + epsilon + " " + beta + "";
+
+        try {
+
+            String queriesString = object.getQueries();
+            String schemasString = object.getSchemas();
+            String attackerSettingsString = object.getAttackerSettings();
+
+            File queriesFile = new File(analyser_files + queriesFileID + ".sql");
+            FileOutputStream is0 = new FileOutputStream(queriesFile);
+            OutputStreamWriter osw0 = new OutputStreamWriter(is0);
+            Writer w0 = new BufferedWriter(osw0);
+            w0.write(queriesString);
+            w0.close();
+
+            File schemasFile = new File(analyser_files + schemasFileID + ".sql");
+            FileOutputStream is0_2 = new FileOutputStream(schemasFile);
+            OutputStreamWriter osw0_2 = new OutputStreamWriter(is0_2);
+            Writer w0_2 = new BufferedWriter(osw0_2);
+            w0_2.write(schemasString);
+            w0_2.close();
+
+            File attackerSettingsFile = new File(analyser_files + attackerSettingsFileID + ".att");
+            FileOutputStream is0_3 = new FileOutputStream(attackerSettingsFile);
+            OutputStreamWriter osw0_3 = new OutputStreamWriter(is0_3);
+            Writer w0_3 = new BufferedWriter(osw0_3);
+            w0_3.write(attackerSettingsString);
+            w0_3.close();
+
+            for (SQLAnalyserDerivativeSensitivityAndPolicyDataObject tempObj : object.getChildren()) {
+                String name = tempObj.getName();
+                String policy = tempObj.getPolicy();
+                String db = tempObj.getDb();
+
+                File plcFile = new File(analyser_files + name + ".plc");
+                FileOutputStream is1 = new FileOutputStream(plcFile);
+                OutputStreamWriter osw1 = new OutputStreamWriter(is1);
+                Writer w1 = new BufferedWriter(osw1);
+                w1.write(policy);
+                w1.close();
+
+                File dbFile = new File(analyser_files + name + ".db");
+                FileOutputStream is2 = new FileOutputStream(dbFile);
+                OutputStreamWriter osw2 = new OutputStreamWriter(is2);
+                Writer w2 = new BufferedWriter(osw2);
+                w2.write(db);
+                w2.close();
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Process p;
+        try {
+
+            SQLAnalyserDerivativeSensitivityResultObject resultObject = new SQLAnalyserDerivativeSensitivityResultObject();
+
+            // Read output from SQL derivative sensitivity (and policy) analyser command-line tool
+            p = Runtime.getRuntime().exec(command);
+            p.waitFor();
+            int exitValue = p.waitFor();
+            if (exitValue == 0) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    output.append(line + "\n");
+                }
+
+                String outputString = output.toString();
+
+                resultObject.setResult(outputString);
+
+                return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
+
+            } else {
+                try (BufferedReader b = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
+                    String line;
+                    while ((line = b.readLine()) != null) {
+                        output.append(line + "\n");
+                    }
+                    String outputString = output.toString();
+
+                    resultObject.setResult(outputString);
+                } catch (IOException e) {
+                    resultObject.setResult("Analyzer failure");
+                }
+            }
+
+            return Response.status(409).entity(new Error(resultObject.getResult())).type(MediaType.APPLICATION_JSON).build();
+
+        } catch (Exception e) {
+            return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
+        } finally {
+            // Delete temporary files after use
+            File queriesFile = new File(analyser_files + queriesFileID + ".sql");
+            queriesFile.delete();
+
+            File schemasFile = new File(analyser_files + schemasFileID + ".sql");
+            schemasFile.delete();
+
+            File attackerSettingsFile = new File(analyser_files + attackerSettingsFileID + ".att");
+            attackerSettingsFile.delete();
+
+            for (SQLAnalyserDerivativeSensitivityAndPolicyDataObject tempObj : object.getChildren()) {
+                String name = tempObj.getName();
+
+                File plcFile = new File(analyser_files + name + ".plc");
+                plcFile.delete();
+
+                File dbFile = new File(analyser_files + name + ".db");
+                dbFile.delete();
+
+            }
+        }
+
+    }
+
+    @POST
     @Path("/analyze-derivative-sensitivity")
     @PermitAll
     @Consumes(MediaType.APPLICATION_JSON)
@@ -158,7 +303,7 @@ public class SQLAnalyserService {
         // Location of SQL derivative sensitivity analyser command-line tool
         String analyser = "../pleak-sql-analysis/banach/dist/build/banach/";
 
-        // Location of temporary txt, nrm and db files that are created for SQL-analyser command-line tool
+        // Location of temporary sql, nrm and db files that are created for SQL-analyser command-line tool
         String analyser_files = "src/main/webapp/derivative_analyser_files/";
 
         String queriesFileID = UUID.randomUUID().toString();
@@ -170,8 +315,8 @@ public class SQLAnalyserService {
         String beta = "--beta " + Float.parseFloat(object.getBeta());
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
 
-        // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on query, nrm and db files
-        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + epsilon + " " + beta + "";
+        // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
+        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql 0 " + epsilon + " " + beta + "";
 
         try {
 
@@ -192,7 +337,7 @@ public class SQLAnalyserService {
             w0_2.write(schemasString);
             w0_2.close();
 
-            for (SQLAnalyserDerivativeSensitivityDataObject tempObj : object.getChildren()) {
+            for (SQLAnalyserDerivativeSensitivityAndPolicyDataObject tempObj : object.getChildren()) {
                 String name = tempObj.getName();
                 String nrm = tempObj.getNrm();
                 String db = tempObj.getDb();
@@ -266,7 +411,7 @@ public class SQLAnalyserService {
             File schemasFile = new File(analyser_files + schemasFileID + ".sql");
             schemasFile.delete();
 
-            for (SQLAnalyserDerivativeSensitivityDataObject tempObj : object.getChildren()) {
+            for (SQLAnalyserDerivativeSensitivityAndPolicyDataObject tempObj : object.getChildren()) {
                 String name = tempObj.getName();
 
                 File nrmFile = new File(analyser_files + name + ".nrm");

@@ -1,10 +1,11 @@
 package com.naples.util;
 
-public class SQLAnalyserDerivativeSensitivityDataObject {
+public class SQLAnalyserDerivativeSensitivityAndPolicyDataObject {
 
     String id;
     String name;
     String nrm;
+    String policy;
     String db;
     String schema;
 
@@ -30,6 +31,14 @@ public class SQLAnalyserDerivativeSensitivityDataObject {
 
     public void setNRM(String nrm) {
         this.nrm = nrm;
+    }
+
+    public String getPolicy() {
+        return this.policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
     }
 
     public String getDb() {
