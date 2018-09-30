@@ -2,15 +2,15 @@ package com.naples.util;
 
 import java.util.List;
 
-public class SQLAnalyserPolicyObject {
+public class SQLAnalyserCombinedSensitivityObject {
 
     List<SQLAnalyserDerivativeSensitivityAndPolicyDataObject> children;
     String queries;
     String schemas;
     String attackerSettings;
-    String sensitiveAttributes;
     String epsilon;
     String beta;
+    String distanceG;
 
     public List<SQLAnalyserDerivativeSensitivityAndPolicyDataObject> getChildren() {
         return this.children;
@@ -44,14 +44,6 @@ public class SQLAnalyserPolicyObject {
         this.attackerSettings = attackerSettings;
     }
 
-    public String getSensitiveAttributes() {
-        return this.sensitiveAttributes;
-    }
-
-    public void setSensitiveAttributes(String sensitiveAttributes) {
-        this.sensitiveAttributes = sensitiveAttributes;
-    }
-
     public String getEpsilon() {
         return this.epsilon;
     }
@@ -66,6 +58,14 @@ public class SQLAnalyserPolicyObject {
 
     public void setBeta(String beta) {
         this.beta = beta;
+    }
+
+    public String getDistanceG() {
+        return this.distanceG;
+    }
+
+    public void setDistanceG(String distanceG) {
+        this.distanceG = distanceG;
     }
 
 }
