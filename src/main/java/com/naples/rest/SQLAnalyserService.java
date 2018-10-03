@@ -512,6 +512,9 @@ public class SQLAnalyserService {
             // Delete temporary file after use
             File modelFile = new File(analyser_input_files + modelFileID + ".bpmn");
             modelFile.delete();
+
+            File resultFile = new File(analyser_result_files + "flowcheckresults");
+            resultFile.delete();
         }
 
     }
