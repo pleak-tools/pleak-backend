@@ -6,7 +6,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.InputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -24,10 +27,12 @@ import com.naples.util.SQLAnalyserSchemaObject;
 import com.naples.util.SQLAnalyserSensitivities;
 import com.naples.util.SQLAnalyserSensitivitiesObject;
 import com.naples.util.SQLAnalyserDerivativeSensitivityObject;
+import com.naples.util.LeaksWhenObject;
 import com.naples.util.SQLAnalyserCombinedSensitivityObject;
 import com.naples.util.SQLAnalyserPolicyObject;
 import com.naples.util.SQLAnalyserDerivativeSensitivityAndPolicyDataObject;
 import com.naples.util.SQLAnalyserDerivativeSensitivityResultObject;
+import com.naples.util.LeaksWhenResultObject;
 
 @Path("/sql-privacy")
 public class SQLAnalyserService {
@@ -427,6 +432,86 @@ public class SQLAnalyserService {
                 dbFile.delete();
 
             }
+        }
+
+    }
+
+    @POST
+    @Path("/analyze-leaks-when")
+    @PermitAll
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response analyzeLeaksWhen(LeaksWhenObject object) {
+
+        // Location of combined sensitivity analyser command-line tool
+        String analyser = "../pleak-leaks-when-analysis/src/";
+
+        String analyser_input_files = "src/main/webapp/leaks_when_files/inputs/";
+
+        String analyser_result_files = "src/main/webapp/leaks_when_files/results/";
+
+        String modelFileID = UUID.randomUUID().toString();
+
+        StringBuffer output = new StringBuffer();
+
+        // Command for combined sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
+        String command = analyser + "GrbDriver.native " + analyser_result_files + " " + analyser_input_files + modelFileID + ".bpmn";
+
+        try {
+
+            String modelString = object.getModel();
+
+            File modelFile = new File(analyser_input_files + modelFileID + ".bpmn");
+            FileOutputStream is0 = new FileOutputStream(modelFile);
+            OutputStreamWriter osw0 = new OutputStreamWriter(is0);
+            Writer w0 = new BufferedWriter(osw0);
+            w0.write(modelString);
+            w0.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+
+            LeaksWhenResultObject resultObject = new LeaksWhenResultObject();
+
+            try {
+
+                StringBuffer ret = new StringBuffer();
+                Process child = Runtime.getRuntime().exec(command);
+                // Get the input stream and read from it
+                InputStream in = child.getInputStream();
+                int c;
+                while ((c = in.read()) != -1) {
+                ret.append((char)c);
+                }
+                in.close();
+                System.out.println(ret.toString());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                resultObject.setResult("Analyzer failure");
+            }
+
+            BufferedReader reader = Files.newBufferedReader(Paths.get(analyser_result_files + "flowcheckresults"));
+
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                output.append(line + "\n");
+            }
+
+            String outputString = output.toString();
+
+            resultObject.setResult(outputString);
+
+            return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
+
+        } catch (Exception e) {
+            return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
+        } finally {
+            // Delete temporary file after use
+            File modelFile = new File(analyser_input_files + modelFileID + ".bpmn");
+            modelFile.delete();
         }
 
     }
