@@ -56,7 +56,7 @@ public class AuthService {
                                      .signWith(SignatureAlgorithm.HS512, key).compact();
       return Response.status(201).entity("Hello").header("JSON-Web-Token", jwToken).build();
     } catch(Exception e) {
-      e.printStackTrace();
+      // e.printStackTrace();
       return Response.status(409).entity("Nope").build();
     } finally {
       session.getTransaction().commit();

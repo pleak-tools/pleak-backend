@@ -143,7 +143,7 @@ public class SQLAnalyserService {
             return Response.ok(sensitivities).type(MediaType.APPLICATION_JSON).build();
 
         } catch (Exception e) {
-            // e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             // Delete temporary schema and query .sql files after use

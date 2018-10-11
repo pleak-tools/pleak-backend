@@ -119,10 +119,10 @@ public class FileService {
 
             return Response.status(200).entity(new JsonDirectory(newDir)).type(MediaType.APPLICATION_JSON).build();
         } catch(FileException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(e.getCode()).entity(new Error(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
         } catch(Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             session.close();
@@ -144,7 +144,7 @@ public class FileService {
 
             return Response.ok(new JsonDirectory(root), MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity("Server error.").build();
         } finally {
             session.close();
@@ -166,7 +166,7 @@ public class FileService {
 
             return Response.ok(new JsonDirectory(shared), MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity("Server error.").build();
         } finally {
             session.close();
@@ -195,7 +195,7 @@ public class FileService {
 
             return Response.ok(new JsonDirectory(dir), MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity("Server error.").build();
         } finally {
             session.close();
@@ -266,10 +266,10 @@ public class FileService {
 
             return Response.ok(new JsonDirectory(dbDir), MediaType.APPLICATION_JSON).build();
         } catch(FileException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(e.getCode()).entity(new Error(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
         } catch(Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             session.close();
@@ -303,7 +303,7 @@ public class FileService {
 
             return Response.noContent().status(200).build();
         } catch(Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             session.close();
@@ -375,10 +375,10 @@ public class FileService {
 
             return Response.ok(new JsonFile(dbFile)).type(MediaType.APPLICATION_JSON).build();
         } catch(FileException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(e.getCode()).entity(new Error(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
         } catch(Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             session.close();
@@ -404,10 +404,10 @@ public class FileService {
 
             return Response.ok(new JsonFile(file), MediaType.APPLICATION_JSON).build();
         } catch (NullPointerException|FileNotFoundException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(404).entity(new Error("File not found.")).type(MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity("Server error.").build();
         } finally {
             session.close();
@@ -531,13 +531,13 @@ public class FileService {
 
             return Response.status(200).entity(new JsonFile(dbFile)).type(MediaType.APPLICATION_JSON).build();
         } catch (NullPointerException|FileNotFoundException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(404).entity(new Error("File not found.")).type(MediaType.APPLICATION_JSON).build();
         } catch(FileException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(e.getCode()).entity(new Error(e.getMessage())).type(MediaType.APPLICATION_JSON).build();
         } catch(Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             session.close();
@@ -564,7 +564,7 @@ public class FileService {
 
             return Response.noContent().status(200).build();
         } catch(Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
         } finally {
             session.close();
@@ -591,10 +591,10 @@ public class FileService {
 
             return Response.ok(jsonFile, MediaType.APPLICATION_JSON).build();
         } catch (NullPointerException|FileNotFoundException|IndexOutOfBoundsException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(404).entity(new Error("File not found.")).type(MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity("Server error.").build();
         } finally {
             session.close();
@@ -620,7 +620,7 @@ public class FileService {
             
         } catch(Exception e) {
         	
-            //e.printStackTrace();
+            e.printStackTrace();
             return Response.status(400).entity(new Error("Server error.")).type(MediaType.APPLICATION_JSON).build();
             
         } finally {
