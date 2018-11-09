@@ -10,7 +10,6 @@ public class SQLAnalyserPolicyObject {
     String attackerSettings;
     String sensitiveAttributes;
     String epsilon;
-    String beta;
 
     public List<SQLAnalyserDerivativeSensitivityAndPolicyDataObject> getChildren() {
         return this.children;
@@ -58,14 +57,6 @@ public class SQLAnalyserPolicyObject {
 
     public void setEpsilon(String epsilon) {
         this.epsilon = epsilon;
-    }
-
-    public String getBeta() {
-        return this.beta;
-    }
-
-    public void setBeta(String beta) {
-        this.beta = beta;
     }
 
 }

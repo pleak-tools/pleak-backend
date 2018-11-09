@@ -178,12 +178,11 @@ public class SQLAnalyserService {
 
         StringBuffer output = new StringBuffer();
 
-        String beta = "--beta 0.0"; // + Float.parseFloat(object.getBeta());
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
         String policy = "--policy=" + analyser_files + policyFileID + ".plc";
 
         // Command for SQL derivative sensitivity (and policy) analyser command-line tool to get results based on schemas, queries, attacker settings, plc and db files
-        String command = analyser + "banach -QDpa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + policy + " " + epsilon + " " + beta + "";
+        String command = analyser + "banach -QDpa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + policy + " " + epsilon + "";
 
         try {
 
@@ -541,7 +540,7 @@ public class SQLAnalyserService {
 
         String beta = "--beta " + Float.parseFloat(object.getBeta());
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
-        String gdistance = "--distance-G " + Float.parseFloat(object.getDistanceG());
+        String gdistance = "--distance-G 1.0"; // + Float.parseFloat(object.getDistanceG());
         String local = "--localsenspath=../pleak-sql-analysis/banach/";
 
         // Command for combined sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
