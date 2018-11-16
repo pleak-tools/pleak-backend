@@ -314,6 +314,8 @@ public class SQLAnalyserService {
         // Location of temporary sql, nrm and db files that are created for SQL-analyser command-line tool
         String analyser_files = "src/main/webapp/derivative_analyser_files/";
 
+        String attackerSettingsFileID = UUID.randomUUID().toString();
+
         String queriesFileID = UUID.randomUUID().toString();
 
         String schemasFileID = UUID.randomUUID().toString();
@@ -322,16 +324,15 @@ public class SQLAnalyserService {
 
         String beta = "--beta " + Float.parseFloat(object.getBeta());
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
-        // String policy = "--policy=" + "../pleak-sql-analysis/banach/ship_policy.plc";
-        // String attacker = "../pleak-sql-analysis/banach/attacker.att";
 
         // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
-        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + "attacker.att " + epsilon + " " + beta + "";
+        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + epsilon + " " + beta + "";
 
         try {
 
             String queriesString = object.getQueries();
             String schemasString = object.getSchemas();
+            String attackerSettingsString = object.getAttackerSettings();
 
             File queriesFile = new File(analyser_files + queriesFileID + ".sql");
             FileOutputStream is0 = new FileOutputStream(queriesFile);
@@ -346,6 +347,13 @@ public class SQLAnalyserService {
             Writer w0_2 = new BufferedWriter(osw0_2);
             w0_2.write(schemasString);
             w0_2.close();
+
+            File attackerSettingsFile = new File(analyser_files + attackerSettingsFileID + ".att");
+            FileOutputStream is0_3 = new FileOutputStream(attackerSettingsFile);
+            OutputStreamWriter osw0_3 = new OutputStreamWriter(is0_3);
+            Writer w0_3 = new BufferedWriter(osw0_3);
+            w0_3.write(attackerSettingsString);
+            w0_3.close();
 
             for (SQLAnalyserDerivativeSensitivityAndPolicyDataObject tempObj : object.getChildren()) {
                 String name = tempObj.getName();
@@ -420,6 +428,9 @@ public class SQLAnalyserService {
 
             File schemasFile = new File(analyser_files + schemasFileID + ".sql");
             schemasFile.delete();
+
+            File attackerSettingsFile = new File(analyser_files + attackerSettingsFileID + ".att");
+            attackerSettingsFile.delete();
 
             for (SQLAnalyserDerivativeSensitivityAndPolicyDataObject tempObj : object.getChildren()) {
                 String name = tempObj.getName();
