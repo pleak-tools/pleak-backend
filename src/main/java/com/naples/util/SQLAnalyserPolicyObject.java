@@ -10,6 +10,7 @@ public class SQLAnalyserPolicyObject {
     String attackerSettings;
     String sensitiveAttributes;
     String epsilon;
+    String numberOfQueries;
 
     public List<SQLAnalyserDerivativeSensitivityAndPolicyDataObject> getChildren() {
         return this.children;
@@ -57,6 +58,14 @@ public class SQLAnalyserPolicyObject {
 
     public void setEpsilon(String epsilon) {
         this.epsilon = epsilon;
+    }
+
+    public String getNumberOfQueries() {
+      return this.numberOfQueries;
+    }
+
+    public void setNumberOfQueries(String numberOfQueries) {
+      this.numberOfQueries = numberOfQueries;
     }
 
 }
