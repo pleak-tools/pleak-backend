@@ -323,7 +323,12 @@ public class SQLAnalyserService {
 
         StringBuffer output = new StringBuffer();
 
-        String beta = "--beta " + Float.parseFloat(object.getBeta());
+        String beta = "";
+
+        if (Float.parseFloat(object.getBeta()) > 0) {
+          beta = "--beta " + Float.parseFloat(object.getBeta());
+        }
+
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
 
         // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
@@ -550,7 +555,12 @@ public class SQLAnalyserService {
 
         StringBuffer output = new StringBuffer();
 
-        String beta = "--beta " + Float.parseFloat(object.getBeta());
+        String beta = "";
+
+        if (Float.parseFloat(object.getBeta()) > 0) {
+          beta = "--beta " + Float.parseFloat(object.getBeta());
+        }
+
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
         String gdistance = "--distance-G 1.0"; // + Float.parseFloat(object.getDistanceG());
         String local = "--localsenspath=../pleak-sql-analysis/banach/";
