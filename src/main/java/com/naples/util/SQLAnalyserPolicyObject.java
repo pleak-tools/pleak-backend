@@ -11,6 +11,9 @@ public class SQLAnalyserPolicyObject {
     String sensitiveAttributes;
     String epsilon;
     String numberOfQueries;
+    String[] allQueries;
+    String[] intermediates;
+    String modelName;
 
     public List<SQLAnalyserDerivativeSensitivityAndPolicyDataObject> getChildren() {
         return this.children;
@@ -66,6 +69,18 @@ public class SQLAnalyserPolicyObject {
 
     public void setNumberOfQueries(String numberOfQueries) {
       this.numberOfQueries = numberOfQueries;
+    }
+
+    public String getModelName() {
+      return this.modelName;
+    }
+
+    public String[] getIntermediates() {
+      return this.intermediates;
+    }
+
+    public String[] getAllQueries() {
+      return this.allQueries;
     }
 
 }

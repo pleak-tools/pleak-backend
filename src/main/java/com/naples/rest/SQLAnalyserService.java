@@ -12,7 +12,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
@@ -26,6 +37,9 @@ import com.naples.util.SQLAnalyserDataObject;
 import com.naples.util.SQLAnalyserSchemaObject;
 import com.naples.util.SQLAnalyserSensitivities;
 import com.naples.util.SQLAnalyserSensitivitiesObject;
+
+import org.postgresql.core.JavaVersion;
+
 import com.naples.util.SQLAnalyserDerivativeSensitivityObject;
 import com.naples.util.LeaksWhenObject;
 import com.naples.util.SQLAnalyserCombinedSensitivityObject;
@@ -33,6 +47,7 @@ import com.naples.util.SQLAnalyserPolicyObject;
 import com.naples.util.SQLAnalyserDerivativeSensitivityAndPolicyDataObject;
 import com.naples.util.SQLAnalyserDerivativeSensitivityResultObject;
 import com.naples.util.LeaksWhenResultObject;
+import com.naples.util.PropagationResultObject;
 
 @Path("/sql-privacy")
 public class SQLAnalyserService {
@@ -154,6 +169,164 @@ public class SQLAnalyserService {
             qFile.delete();
         }
 
+    }
+
+    @POST
+    @Path("/propagate")
+    @PermitAll
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response propagate(SQLAnalyserPolicyObject object) {
+      // same user as for ga
+      // if schema is empty button for auto-fill apears
+  
+      // "create extension cube;";
+      // "create extension earthdistance;";
+  
+      PropagationResultObject resultObject = new PropagationResultObject();
+      resultObject.tableSchemas = new HashMap<String, String>();
+      HashMap<String, List<String>> tableColumns = new HashMap<String, List<String>>();
+      resultObject.tableDatas = new HashMap<String, String>();
+  
+      String url = "jdbc:postgresql://localhost/ga_propagation";
+      String user = "postgres";
+      String password = "Qwerty11";
+  
+      String[] intermediates = object.getIntermediates();
+      String listTablesQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';";
+  
+      try (Connection con = DriverManager.getConnection(url, user, password); Statement st = con.createStatement();) {
+        ResultSet rs = st.executeQuery(listTablesQuery);
+        while (rs.next()) {
+          System.out.println("DROP " + rs.getString(1));
+  
+          String dropCurrentTableQuery = "DROP TABLE IF EXISTS " + rs.getString(1) + ";";
+          Statement st2 = con.createStatement();
+          st2.executeUpdate(dropCurrentTableQuery);
+        }
+        System.out.println("Database cleaned\n");
+      } catch (SQLException ex) {
+        Logger lgr = Logger.getLogger(JavaVersion.class.getName());
+        lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      }
+  
+      // Clear temporary db, db follows the model name
+      // try (Connection con = DriverManager.getConnection(url, user, password);
+      // Statement st = con.createStatement();) {
+      // st.executeUpdate(createDbSql);
+      // System.out.println("Database created successfully...");
+      // } catch (SQLException ex) {
+      // Logger lgr = Logger.getLogger(JavaVersion.class.getName());
+      // lgr.log(Level.SEVERE, ex.getMessage(), ex);
+      // }
+  
+      List<String> visitedTables = new ArrayList<String>(); // for parameters, they are duplicated
+      String[] propagationQueries = object.getAllQueries();
+      for (int i = 0; i < propagationQueries.length; i++) {
+  
+        System.out.println(propagationQueries[i]);
+  
+        try (Connection con = DriverManager.getConnection(url, user, password); Statement st = con.createStatement();) {
+          if (propagationQueries[i].startsWith("create table") || propagationQueries[i].startsWith("CREATE TABLE")) {
+            st.executeUpdate(propagationQueries[i]);
+            String currentCrerateTableName = propagationQueries[i].substring(13).split(" ")[0];
+  
+            for (SQLAnalyserDerivativeSensitivityAndPolicyDataObject tempObj : object.getChildren()) {
+              String name = tempObj.getName();
+              if (visitedTables.contains(name) || !currentCrerateTableName.equals(name))
+                continue;
+  
+              visitedTables.add(name);
+              String db = tempObj.getDb();
+              // System.out.println(db);
+              String dbPruned = db.substring(db.indexOf("\n", 0) + 1);
+              // String colsDb = db.substring(0, db.indexOf("\n", 0) + 1);
+  
+              System.out.println("Filling in " + name);
+              // System.out.println(dbPruned);
+  
+              String[] parts = dbPruned.split("\n");
+  
+              for (int k = 0; k < parts.length; k++) {
+                if (parts[k] == "")
+                  continue;
+  
+                // System.out.println(parts[k]);
+                String[] cols = parts[k].split(" ");
+                String insert = "INSERT INTO " + name + " VALUES(";
+                for (int m = 0; m < cols.length; m++) {
+                  String data = cols[m];
+                  Scanner n = new Scanner(data);
+                  if (n.hasNextFloat()) {
+                    insert += cols[m];
+                  } else {
+                    insert += "'" + cols[m] + "'";
+                  }
+                  if (m < cols.length - 1)
+                    insert += ", ";
+                }
+                insert += ");";
+                // System.out.println(insert);
+                st.executeUpdate(insert);
+              }
+            }
+          } else {
+            if (propagationQueries[i].contains("into ")) {
+              st.executeUpdate(propagationQueries[i]);
+            } else {
+              ResultSet rs = st.executeQuery(propagationQueries[i]);
+            }
+            // for(int j = 0; j < intermediates.length; j++) {
+            // if(propagationQueries[i].contains("into " + intermediates[j])) {
+            // while (rs.next()) {
+            // System.out.println(rs.getString(1) + "\n" + rs.getString(2));
+            // }
+            // }
+            // }
+          }
+  
+          for (int j = 0; j < intermediates.length; j++) {
+            if (propagationQueries[i].contains("into " + intermediates[j])) {
+              String getSchemaSql = "select column_name, data_type from INFORMATION_SCHEMA.COLUMNS where table_name = '"
+                  + intermediates[j] + "';";
+              String getDataSql = "select * from " + intermediates[j] + ";";
+  
+              ResultSet rs2 = st.executeQuery(getSchemaSql);
+  
+              System.out.println(intermediates[j] + "\n");
+              String tableSchema = "CREATE TABLE " + intermediates[j] + "(\n";
+              Integer numberOfCols = 0;
+              tableColumns.put(intermediates[j], new ArrayList<>());
+  
+              while (rs2.next()) {
+                numberOfCols++;
+                tableColumns.get(intermediates[j]).add(rs2.getString(1));
+                tableSchema += rs2.getString(1) + " " + rs2.getString(2) + ",\n";
+                System.out.println(rs2.getString(1) + " " + rs2.getString(2));
+              }
+              tableSchema = tableSchema.substring(0, tableSchema.length() - 2);
+              tableSchema += "\n);";
+  
+              resultObject.tableSchemas.put(intermediates[j], tableSchema);
+  
+              String tableData = String.join(" ", tableColumns.get(intermediates[j])) + "\n";
+              ResultSet rs3 = st.executeQuery(getDataSql);
+              while (rs3.next()) {
+                for (int k = 0; k < numberOfCols; k++) {
+                  tableData += rs3.getString(k + 1) + (k < numberOfCols - 1 ? " " : "");
+                }
+                tableData += "\n";
+              }
+  
+              resultObject.tableDatas.put(intermediates[j], tableData);
+            }
+          }
+        } catch (SQLException ex) {
+          Logger lgr = Logger.getLogger(JavaVersion.class.getName());
+          lgr.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+      }
+  
+      return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
     }
 
     @POST
