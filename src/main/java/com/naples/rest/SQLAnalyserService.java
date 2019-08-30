@@ -14,6 +14,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -168,7 +169,6 @@ public class SQLAnalyserService {
             File qFile = new File(analyser_files + queryFileID + ".sql");
             qFile.delete();
         }
-
     }
 
     @POST
@@ -181,7 +181,9 @@ public class SQLAnalyserService {
   
       // "create extension cube;";
       // "create extension earthdistance;";
-  
+      // Map<String, List<Map<String, Integer>>> tableCols = new HashMap<String, List<Map<String, Integer>>>();
+
+      boolean isParametersCreated = false;
       PropagationResultObject resultObject = new PropagationResultObject();
       resultObject.tableSchemas = new HashMap<String, String>();
       HashMap<String, List<String>> tableColumns = new HashMap<String, List<String>>();
@@ -191,7 +193,7 @@ public class SQLAnalyserService {
       String user = "postgres";
       String password = "Qwerty11";
   
-      String[] intermediates = object.getIntermediates();
+      String[][] intermediates = object.getIntermediates();
       String listTablesQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';";
   
       try (Connection con = DriverManager.getConnection(url, user, password); Statement st = con.createStatement();) {
@@ -224,26 +226,45 @@ public class SQLAnalyserService {
       for (int i = 0; i < propagationQueries.length; i++) {
   
         System.out.println(propagationQueries[i]);
-  
+        System.out.println("\n");
+        System.out.println("\n");
+
+        if(propagationQueries[i].startsWith("CREATE TABLE parameters")) {
+          if(!isParametersCreated){
+            isParametersCreated = true;
+            // System.out.println("paramspam");
+          }
+          else{
+            continue;
+          }
+        }
+
+        Map<String, List<String>> typesInTable = new HashMap<String, List<String>>();
+
         try (Connection con = DriverManager.getConnection(url, user, password); Statement st = con.createStatement();) {
           if (propagationQueries[i].startsWith("create table") || propagationQueries[i].startsWith("CREATE TABLE")) {
             st.executeUpdate(propagationQueries[i]);
             String currentCrerateTableName = propagationQueries[i].substring(13).split(" ")[0];
   
+            List<Map<String, Integer>> colsInDbOrder = new ArrayList<Map<String, Integer>>();
+
             for (SQLAnalyserDerivativeSensitivityAndPolicyDataObject tempObj : object.getChildren()) {
-              String name = tempObj.getName();
-              if (visitedTables.contains(name) || !currentCrerateTableName.equals(name))
+              String tableName = tempObj.getName();
+              if (visitedTables.contains(tableName) || !currentCrerateTableName.equals(tableName))
                 continue;
-  
-              visitedTables.add(name);
+              
+              visitedTables.add(tableName);
               String db = tempObj.getDb();
               // System.out.println(db);
               String dbPruned = db.substring(db.indexOf("\n", 0) + 1);
               // String colsDb = db.substring(0, db.indexOf("\n", 0) + 1);
   
-              System.out.println("Filling in " + name);
+              System.out.println("Filling in " + tableName);
+              System.out.println("\n");
               // System.out.println(dbPruned);
   
+              // typesInTable.put(tableName, new ArrayList<>());
+              String[] headers = db.substring(0, db.indexOf("\n", 0)).split(" ");
               String[] parts = dbPruned.split("\n");
   
               for (int k = 0; k < parts.length; k++) {
@@ -252,7 +273,8 @@ public class SQLAnalyserService {
   
                 // System.out.println(parts[k]);
                 String[] cols = parts[k].split(" ");
-                String insert = "INSERT INTO " + name + " VALUES(";
+                String insert = "INSERT INTO " + tableName + " VALUES(";
+
                 for (int m = 0; m < cols.length; m++) {
                   String data = cols[m];
                   Scanner n = new Scanner(data);
@@ -269,11 +291,16 @@ public class SQLAnalyserService {
                 st.executeUpdate(insert);
               }
             }
+
+            // tableCols.put(currentCrerateTableName, colsInDbOrder);
+
           } else {
-            if (propagationQueries[i].contains("into ")) {
+            if (propagationQueries[i].contains("into ") || propagationQueries[i].contains("INTO ")) {
               st.executeUpdate(propagationQueries[i]);
+              System.out.println("\n");
             } else {
               ResultSet rs = st.executeQuery(propagationQueries[i]);
+              // System.out.println("\n");
             }
             // for(int j = 0; j < intermediates.length; j++) {
             // if(propagationQueries[i].contains("into " + intermediates[j])) {
@@ -283,41 +310,63 @@ public class SQLAnalyserService {
             // }
             // }
           }
-  
+
           for (int j = 0; j < intermediates.length; j++) {
-            if (propagationQueries[i].contains("into " + intermediates[j])) {
+            if (propagationQueries[i].contains("into " + intermediates[j][0])) {
               String getSchemaSql = "select column_name, data_type from INFORMATION_SCHEMA.COLUMNS where table_name = '"
-                  + intermediates[j] + "';";
-              String getDataSql = "select * from " + intermediates[j] + ";";
+                  + intermediates[j][0] + "';";
+              String getDataSql = "select * from " + intermediates[j][0] + ";";
   
               ResultSet rs2 = st.executeQuery(getSchemaSql);
   
-              System.out.println(intermediates[j] + "\n");
-              String tableSchema = "CREATE TABLE " + intermediates[j] + "(\n";
+              System.out.println(intermediates[j][0] + "\n");
+              String tableSchema = "CREATE TABLE " + intermediates[j][0] + "(\n";
               Integer numberOfCols = 0;
-              tableColumns.put(intermediates[j], new ArrayList<>());
+              tableColumns.put(intermediates[j][1], new ArrayList<>());
   
+              typesInTable.put(intermediates[j][0], new ArrayList<>());
+
               while (rs2.next()) {
                 numberOfCols++;
-                tableColumns.get(intermediates[j]).add(rs2.getString(1));
+                tableColumns.get(intermediates[j][1]).add(rs2.getString(1));
                 tableSchema += rs2.getString(1) + " " + rs2.getString(2) + ",\n";
                 System.out.println(rs2.getString(1) + " " + rs2.getString(2));
+                typesInTable.get(intermediates[j][0]).add(rs2.getString(2));
               }
               tableSchema = tableSchema.substring(0, tableSchema.length() - 2);
               tableSchema += "\n);";
   
-              resultObject.tableSchemas.put(intermediates[j], tableSchema);
+              resultObject.tableSchemas.put(intermediates[j][1], tableSchema);
   
-              String tableData = String.join(" ", tableColumns.get(intermediates[j])) + "\n";
+              StringBuilder tableData = new StringBuilder("[[");
+              List<String> cols = tableColumns.get(intermediates[j][1]);
+              cols.forEach(col -> {
+                tableData.append('"' + col + '"' + ", ");
+              });
+              tableData.delete(tableData.length() - 2, tableData.length());
+              tableData.append("],");
+              
               ResultSet rs3 = st.executeQuery(getDataSql);
               while (rs3.next()) {
+                tableData.append("[");
                 for (int k = 0; k < numberOfCols; k++) {
-                  tableData += rs3.getString(k + 1) + (k < numberOfCols - 1 ? " " : "");
+                  
+                  // System.out.println(typesInTable.get(intermediates[j][0]).get(k));
+                  // System.out.println("----------------------------------");
+                  if(typesInTable.get(intermediates[j][0]).get(k).equals("boolean")) {
+                    // System.out.println(rs3.getBoolean(k + 1) + "\n");
+                    tableData.append('"' + Boolean.toString(rs3.getBoolean(k + 1)) + '"' + (k < numberOfCols - 1 ? ", " : ""));
+                  }
+                  else{
+                    tableData.append('"' + rs3.getString(k + 1) + '"' + (k < numberOfCols - 1 ? ", " : ""));
+                  }
                 }
-                tableData += "\n";
+                tableData.append("],");
               }
   
-              resultObject.tableDatas.put(intermediates[j], tableData);
+              tableData.delete(tableData.length() - 1, tableData.length());
+              tableData.append("]");
+              resultObject.tableDatas.put(intermediates[j][1], tableData.toString());
             }
           }
         } catch (SQLException ex) {
@@ -325,7 +374,7 @@ public class SQLAnalyserService {
           lgr.log(Level.SEVERE, ex.getMessage(), ex);
         }
       }
-  
+      
       return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
     }
 

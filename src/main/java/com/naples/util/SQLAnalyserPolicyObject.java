@@ -12,7 +12,7 @@ public class SQLAnalyserPolicyObject {
     String epsilon;
     String numberOfQueries;
     String[] allQueries;
-    String[] intermediates;
+    String[][] intermediates;
     String modelName;
 
     public List<SQLAnalyserDerivativeSensitivityAndPolicyDataObject> getChildren() {
@@ -75,7 +75,7 @@ public class SQLAnalyserPolicyObject {
       return this.modelName;
     }
 
-    public String[] getIntermediates() {
+    public String[][] getIntermediates() {
       return this.intermediates;
     }
 
