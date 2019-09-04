@@ -402,10 +402,16 @@ public class SQLAnalyserService {
 
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
         String policy = "--policy=" + analyser_files + policyFileID + ".plc";
+
+        String errorUB = "--errorUB " + object.getErrorUB(); //0.9
+        String sigmoidBeta = "--sigmoid-beta " + object.getSigmoidBeta(); // 0.01
+        String sigmoidPrecision = "--sigmoid-precision " + object.getSigmoidPrecision(); // 5.0
+        String dateStyle = "--datestyle " + object.getDateStyle(); // European
+
         String numberOfQueries = (Integer.parseInt(object.getNumberOfQueries()) >= 1) ? "--numOfQueries " + Integer.parseInt(object.getNumberOfQueries()) : "--numOfQueries 1";
 
         // Command for SQL derivative sensitivity (and policy) analyser command-line tool to get results based on schemas, queries, attacker settings, plc and db files
-        String command = analyser + "banach -QDpa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + policy + " " + epsilon + " " + numberOfQueries + "";
+        String command = analyser + "banach -QDpa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + policy + " " + epsilon + " " + numberOfQueries + " " + errorUB + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
 
         try {
 
