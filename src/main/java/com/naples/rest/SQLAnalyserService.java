@@ -559,8 +559,13 @@ public class SQLAnalyserService {
 
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
 
+        String errorUB = "--errorUB " + object.getErrorUB(); //0.9
+        String sigmoidBeta = "--sigmoid-beta " + object.getSigmoidBeta(); // 0.01
+        String sigmoidPrecision = "--sigmoid-precision " + object.getSigmoidPrecision(); // 5.0
+        String dateStyle = "--datestyle " + object.getDateStyle(); // European
+
         // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
-        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + epsilon + " " + beta + "";
+        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + epsilon + " " + beta + " " + errorUB + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
 
         try {
 
@@ -793,8 +798,13 @@ public class SQLAnalyserService {
         String gdistance = "--distance-G 1.0"; // + Float.parseFloat(object.getDistanceG());
         String local = "--localsenspath=../pleak-sql-analysis/banach/";
 
+        String errorUB = "--errorUB " + object.getErrorUB(); //0.9
+        String sigmoidBeta = "--sigmoid-beta " + object.getSigmoidBeta(); // 0.01
+        String sigmoidPrecision = "--sigmoid-precision " + object.getSigmoidPrecision(); // 5.0
+        String dateStyle = "--datestyle " + object.getDateStyle(); // European
+
         // Command for combined sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
-        String command = analyser + "banach -QDca --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + local + " " + epsilon + " " + beta + " " + gdistance + "";
+        String command = analyser + "banach -QDca --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + local + " " + epsilon + " " + beta + " " + gdistance + " " + errorUB + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
 
         try {
 
