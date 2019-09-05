@@ -403,10 +403,26 @@ public class SQLAnalyserService {
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
         String policy = "--policy=" + analyser_files + policyFileID + ".plc";
 
-        String errorUB = "--errorUB " + object.getErrorUB(); //0.9
-        String sigmoidBeta = "--sigmoid-beta " + object.getSigmoidBeta(); // 0.01
-        String sigmoidPrecision = "--sigmoid-precision " + object.getSigmoidPrecision(); // 5.0
-        String dateStyle = "--datestyle " + object.getDateStyle(); // European
+        String errorUB = "";
+        String sigmoidBeta = "";
+        String sigmoidPrecision = "";
+        String dateStyle = "";
+
+        if (Float.parseFloat(object.getErrorUB()) > 0) {
+          errorUB = "--errorUB " + object.getErrorUB(); //0.9
+        }
+
+        if (Float.parseFloat(object.getSigmoidBeta()) > 0) {
+          sigmoidBeta = "--sigmoid-beta " + object.getSigmoidBeta(); // 0.01
+        }
+
+        if (Float.parseFloat(object.getSigmoidPrecision()) > 0) {
+          sigmoidPrecision = "--sigmoid-precision " + object.getSigmoidPrecision(); // 5.0
+        }
+
+        if (!object.getDateStyle().toString().equals("-1")) {
+          dateStyle = "--datestyle " + object.getDateStyle(); // European
+        }
 
         String numberOfQueries = (Integer.parseInt(object.getNumberOfQueries()) >= 1) ? "--numOfQueries " + Integer.parseInt(object.getNumberOfQueries()) : "--numOfQueries 1";
 
