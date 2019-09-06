@@ -403,26 +403,10 @@ public class SQLAnalyserService {
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
         String policy = "--policy=" + analyser_files + policyFileID + ".plc";
 
-        String errorUB = "";
-        String sigmoidBeta = "";
-        String sigmoidPrecision = "";
-        String dateStyle = "";
-
-        if (Float.parseFloat(object.getErrorUB()) > 0) {
-          errorUB = "--errorUB " + object.getErrorUB(); //0.9
-        }
-
-        if (Float.parseFloat(object.getSigmoidBeta()) > 0) {
-          sigmoidBeta = "--sigmoid-beta " + object.getSigmoidBeta(); // 0.01
-        }
-
-        if (Float.parseFloat(object.getSigmoidPrecision()) > 0) {
-          sigmoidPrecision = "--sigmoid-precision " + object.getSigmoidPrecision(); // 5.0
-        }
-
-        if (!object.getDateStyle().toString().equals("-1")) {
-          dateStyle = "--datestyle " + object.getDateStyle(); // European
-        }
+        String errorUB = (Float.parseFloat(object.getErrorUB()) > 0) ? "--errorUB " + object.getErrorUB() : ""; // 0.9
+        String sigmoidBeta = (Float.parseFloat(object.getSigmoidBeta()) > 0) ? "--sigmoid-beta " + object.getSigmoidBeta() : ""; // 0.01
+        String sigmoidPrecision = (Float.parseFloat(object.getSigmoidPrecision()) > 0) ? "--sigmoid-precision " + object.getSigmoidPrecision() : ""; // 5.0
+        String dateStyle = (!object.getDateStyle().toString().equals("-1")) ? "--datestyle " + object.getDateStyle() : ""; // European
 
         String numberOfQueries = (Integer.parseInt(object.getNumberOfQueries()) >= 1) ? "--numOfQueries " + Integer.parseInt(object.getNumberOfQueries()) : "--numOfQueries 1";
 
@@ -575,10 +559,10 @@ public class SQLAnalyserService {
 
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
 
-        String errorUB = "--errorUB " + object.getErrorUB(); //0.9
-        String sigmoidBeta = "--sigmoid-beta " + object.getSigmoidBeta(); // 0.01
-        String sigmoidPrecision = "--sigmoid-precision " + object.getSigmoidPrecision(); // 5.0
-        String dateStyle = "--datestyle " + object.getDateStyle(); // European
+        String errorUB = (Float.parseFloat(object.getErrorUB()) > 0) ? "--errorUB " + object.getErrorUB() : ""; // 0.9
+        String sigmoidBeta = (Float.parseFloat(object.getSigmoidBeta()) > 0) ? "--sigmoid-beta " + object.getSigmoidBeta() : ""; // 0.01
+        String sigmoidPrecision = (Float.parseFloat(object.getSigmoidPrecision()) > 0) ? "--sigmoid-precision " + object.getSigmoidPrecision() : ""; // 5.0
+        String dateStyle = (!object.getDateStyle().toString().equals("-1")) ? "--datestyle " + object.getDateStyle() : ""; // European
 
         // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
         String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + epsilon + " " + beta + " " + errorUB + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
@@ -814,10 +798,10 @@ public class SQLAnalyserService {
         String gdistance = "--distance-G 1.0"; // + Float.parseFloat(object.getDistanceG());
         String local = "--localsenspath=../pleak-sql-analysis/banach/";
 
-        String errorUB = "--errorUB " + object.getErrorUB(); //0.9
-        String sigmoidBeta = "--sigmoid-beta " + object.getSigmoidBeta(); // 0.01
-        String sigmoidPrecision = "--sigmoid-precision " + object.getSigmoidPrecision(); // 5.0
-        String dateStyle = "--datestyle " + object.getDateStyle(); // European
+        String errorUB = (Float.parseFloat(object.getErrorUB()) > 0) ? "--errorUB " + object.getErrorUB() : ""; // 0.9
+        String sigmoidBeta = (Float.parseFloat(object.getSigmoidBeta()) > 0) ? "--sigmoid-beta " + object.getSigmoidBeta() : ""; // 0.01
+        String sigmoidPrecision = (Float.parseFloat(object.getSigmoidPrecision()) > 0) ? "--sigmoid-precision " + object.getSigmoidPrecision() : ""; // 5.0
+        String dateStyle = (!object.getDateStyle().toString().equals("-1")) ? "--datestyle " + object.getDateStyle() : ""; // European
 
         // Command for combined sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
         String command = analyser + "banach -QDca --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + local + " " + epsilon + " " + beta + " " + gdistance + " " + errorUB + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
