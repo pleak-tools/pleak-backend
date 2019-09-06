@@ -71,7 +71,7 @@ public class LeakDetectService {
             in.write((verificationType + "\n").getBytes());
             in.flush();
           } else if (output.contains("All task in the model:") && output.contains("Choose task:")) {
-            resultObject.setResult(output.replace("All task in the model: ", "").replace("\nChoose task: \n", ""));
+            resultObject.setResult(output.replace("All task in the model:\n", "").replace("\nChoose task: \n", ""));
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
           } else if (output.contains("PARTECIPANTS:") && output.contains("Choose partecipant:")) {
             resultObject.setResult(output.replace("PARTECIPANTS:\n", "").replace("\nChoose partecipant: \n", ""));
@@ -162,10 +162,6 @@ public class LeakDetectService {
             in.flush();
           } else if (output.contains("All data in the model") && output.contains("Choose data (, in the middle):")) {
             resultObject.setResult(output.replace("All data in the model ", "").replace("\n\nChoose data (, in the middle):", ""));
-            process.destroy();
-            return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
-          } else {
-            resultObject.setResult(output);
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
           }
