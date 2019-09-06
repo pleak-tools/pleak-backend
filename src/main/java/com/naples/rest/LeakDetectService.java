@@ -83,6 +83,10 @@ public class LeakDetectService {
             in.flush();
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
+          } else if (output.contains("No SSsharing PET over this model")) {
+            resultObject.setResult("No SSsharing PET over this model");
+            process.destroy();
+            return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
           } else if (output.contains("PATH") && output.contains("CONTINUE (Y/N)")) {
             resultObject.setResult(output.replace("\nCONTINUE (Y/N) :", "").replace("true\n", "").replace("PATH : ", ""));
             in.write(("N\n").getBytes());
