@@ -60,7 +60,7 @@ public class SQLAnalyserService {
     public Response analyse(SQLAnalyserDataObject object) {
 
         // Location of SQL-analyser command-line tool
-        String analyser = "../pleak-sql-analysis/";
+        String analyser = "../pleak-sql-analysis/globalsensitivity-cabal/dist/build/sqla/";
 
         // Location of temporary sql files that are created for SQL-analyser command-line tool
         String analyser_files = "src/main/webapp/analyser_files/";
