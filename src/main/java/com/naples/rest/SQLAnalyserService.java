@@ -190,8 +190,8 @@ public class SQLAnalyserService {
       resultObject.tableDatas = new HashMap<String, String>();
   
       String url = "jdbc:postgresql://localhost/ga_propagation";
-      String user = "postgres";
-      String password = "Qwerty11";
+      String user = "ga_propagation";
+      String password = "ceec4eif7ya";
   
       String[][] intermediates = object.getIntermediates();
       String listTablesQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';";
