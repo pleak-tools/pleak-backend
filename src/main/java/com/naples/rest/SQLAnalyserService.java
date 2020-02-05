@@ -1,54 +1,55 @@
 package com.naples.rest;
 
+import com.naples.helper.Error;
+import com.naples.util.LeaksWhenObject;
+import com.naples.util.LeaksWhenResultObject;
+import com.naples.util.PropagationResultObject;
+import com.naples.util.SQLAnalyserCombinedSensitivityObject;
+import com.naples.util.SQLAnalyserDataObject;
+import com.naples.util.SQLAnalyserDerivativeSensitivityAndPolicyDataObject;
+import com.naples.util.SQLAnalyserDerivativeSensitivityObject;
+import com.naples.util.SQLAnalyserDerivativeSensitivityResultObject;
+import com.naples.util.SQLAnalyserPolicyObject;
+import com.naples.util.SQLAnalyserSchemaObject;
+import com.naples.util.SQLAnalyserSensitivities;
+import com.naples.util.SQLAnalyserSensitivitiesObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.InputStream;
-import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.Writer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.naples.helper.Error;
-import com.naples.util.SQLAnalyserDataObject;
-import com.naples.util.SQLAnalyserSchemaObject;
-import com.naples.util.SQLAnalyserSensitivities;
-import com.naples.util.SQLAnalyserSensitivitiesObject;
-
 import org.postgresql.core.JavaVersion;
 
-import com.naples.util.SQLAnalyserDerivativeSensitivityObject;
-import com.naples.util.LeaksWhenObject;
-import com.naples.util.SQLAnalyserCombinedSensitivityObject;
-import com.naples.util.SQLAnalyserPolicyObject;
-import com.naples.util.SQLAnalyserDerivativeSensitivityAndPolicyDataObject;
-import com.naples.util.SQLAnalyserDerivativeSensitivityResultObject;
-import com.naples.util.LeaksWhenResultObject;
-import com.naples.util.PropagationResultObject;
+
+
+
+
 
 @Path("/sql-privacy")
 public class SQLAnalyserService {
@@ -188,7 +189,9 @@ public class SQLAnalyserService {
       resultObject.tableSchemas = new HashMap<String, String>();
       HashMap<String, List<String>> tableColumns = new HashMap<String, List<String>>();
       resultObject.tableDatas = new HashMap<String, String>();
-  
+      resultObject.tableConstraints = new HashMap<String, String>();
+      String commandError = "";
+
       String url = "jdbc:postgresql://localhost/ga_propagation";
       String user = "ga_propagation";
       String password = "ceec4eif7ya";
@@ -375,6 +378,74 @@ public class SQLAnalyserService {
         }
       }
       
+      String attackerSettingsString = object.getAttackerSettings();
+      String attackerSettingsFileID = UUID.randomUUID().toString();
+      String outputSchemaEmptyFileID = UUID.randomUUID().toString();
+      String analyser_files = "src/main/webapp/derivative_analyser_files/";
+
+      File[] outputs = new File[0];
+    try{
+      File attackerSettingsFile = new File(analyser_files + attackerSettingsFileID + ".att");
+      FileOutputStream a1 = new FileOutputStream(attackerSettingsFile);
+      OutputStreamWriter a2 = new OutputStreamWriter(a1);
+      Writer a3 = new BufferedWriter(a2);
+      a3.write(attackerSettingsString);
+      a3.close();
+
+      String str1 = object.getQueries();
+      String queriesFileID = UUID.randomUUID().toString();
+      File queriesFile = new File(analyser_files + queriesFileID + ".sql");
+      FileOutputStream q1 = new FileOutputStream(queriesFile);
+      OutputStreamWriter q2 = new OutputStreamWriter(q1);
+      Writer q3 = new BufferedWriter(q2);
+      q3.write(str1);
+      q3.close();
+
+
+
+      String str2 = object.getSchemas();
+      String schemasFileID = UUID.randomUUID().toString();
+      File schemasFile = new File(analyser_files + schemasFileID + ".sql");
+      FileOutputStream s1 = new FileOutputStream(schemasFile);
+      OutputStreamWriter s2 = new OutputStreamWriter(s1);
+      Writer s3 = new BufferedWriter(s2);
+      s3.write(str2);
+      s3.close();
+
+      String command = "../sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation --connection dbname=banach --leak-mode if-exists -o " + 
+      "output.att " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att " + 
+      analyser_files + schemasFileID + ".sql " + " src/main/webapp/derivative_analyser_files/" + outputSchemaEmptyFileID;
+
+      Process p;
+      p = Runtime.getRuntime().exec(command);
+      p.waitFor();
+      int exitValue = p.waitFor();
+      if (exitValue == 0) {
+          File dir = new File(analyser_files);
+
+          outputs = dir.listFiles(new FilenameFilter() {
+                    public boolean accept(File dir, String filename)
+                        { return filename.endsWith(".att"); }
+          });
+      }
+      else{
+        InputStream fromError = p.getErrorStream();
+        byte[] encodedError = fromError.readAllBytes();
+        commandError = new String(encodedError);
+      }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    for(int i = 0; i < outputs.length; i++){
+      try{
+        byte[] encoded = Files.readAllBytes(Paths.get(outputs[i].toPath().toString()));
+        resultObject.tableConstraints.put(outputs[i].getName(), new String(encoded));
+      }
+      catch(Exception e){}
+    }
+  
+      resultObject.commandError = commandError;
       return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
     }
 
