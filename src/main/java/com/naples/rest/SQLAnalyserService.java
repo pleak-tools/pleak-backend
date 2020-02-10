@@ -430,8 +430,16 @@ public class SQLAnalyserService {
       }
       else{
         InputStream fromError = p.getErrorStream();
-        byte[] encodedError = fromError.readAllBytes();
-        commandError = new String(encodedError);
+        String outError = "";
+        try {
+          int in = -1;
+          while ((in = fromError.read()) != -1) {
+            outError += (char)in;
+          }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        commandError = outError;
       }
     } catch (Exception e) {
         e.printStackTrace();
