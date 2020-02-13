@@ -385,6 +385,9 @@ public class SQLAnalyserService {
 
       File[] outputs = new File[0];
     try{
+      File outputSchemaFile = new File(analyser_files + outputSchemaEmptyFileID + ".sql");
+      FileOutputStream q0 = new FileOutputStream(outputSchemaFile);
+
       File attackerSettingsFile = new File(analyser_files + attackerSettingsFileID + ".att");
       FileOutputStream a1 = new FileOutputStream(attackerSettingsFile);
       OutputStreamWriter a2 = new OutputStreamWriter(a1);
@@ -412,9 +415,9 @@ public class SQLAnalyserService {
       s3.write(str2);
       s3.close();
 
-      String command = "../sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation --connection dbname=banach --leak-mode if-exists -o " + 
+      String command = "../sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation --connection dbname=ga_propagation --leak-mode if-exists -o " + 
       "output.att " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att " + 
-      analyser_files + schemasFileID + ".sql " + " src/main/webapp/derivative_analyser_files/" + outputSchemaEmptyFileID;
+      analyser_files + schemasFileID + ".sql " + analyser_files + outputSchemaEmptyFileID + ".sql";
 
       Process p;
       p = Runtime.getRuntime().exec(command);
