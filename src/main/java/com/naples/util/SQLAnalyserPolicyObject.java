@@ -13,6 +13,7 @@ public class SQLAnalyserPolicyObject {
   String numberOfQueries;
   String[] allQueries;
   String[][] intermediates;
+  String cleanSql;
   String modelName;
   String errorUB;
   String sigmoidBeta;
@@ -29,6 +30,10 @@ public class SQLAnalyserPolicyObject {
 
   public String getQueries() {
     return this.queries;
+  }
+
+  public String getCleanSql() {
+    return this.cleanSql;
   }
 
   public void setQueries(String queries) {

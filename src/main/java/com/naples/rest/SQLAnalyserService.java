@@ -395,13 +395,14 @@ public class SQLAnalyserService {
       a3.write(attackerSettingsString);
       a3.close();
 
-      String str1 = object.getQueries();
+      // String str1 = object.getQueries();
+      String cleanSql = object.getCleanSql();
       String queriesFileID = UUID.randomUUID().toString();
       File queriesFile = new File(analyser_files + queriesFileID + ".sql");
       FileOutputStream q1 = new FileOutputStream(queriesFile);
       OutputStreamWriter q2 = new OutputStreamWriter(q1);
       Writer q3 = new BufferedWriter(q2);
-      q3.write(str1);
+      q3.write(cleanSql);
       q3.close();
 
 
@@ -414,7 +415,7 @@ public class SQLAnalyserService {
       Writer s3 = new BufferedWriter(s2);
       s3.write(str2);
       s3.close();
-
+      
       String command = "../sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation --connection dbname=ga_propagation --leak-mode if-exists -o " + 
       "output.att " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att " + 
       analyser_files + schemasFileID + ".sql " + analyser_files + outputSchemaEmptyFileID + ".sql";
