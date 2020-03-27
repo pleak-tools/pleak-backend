@@ -71,13 +71,13 @@ public class LeakDetectService {
             in.write((verificationType + "\n").getBytes());
             in.flush();
           } else if (output.contains("All task in the model:") && output.contains("Choose task:")) {
-            resultObject.setResult(output.replace("All task in the model:\n", "").replace("\nChoose task: \n", ""));
+            resultObject.setResult(output.replace("All task in the model:\n", "").replace("\n\n Choose task: \n\n", "").replace("\nChoose task: \n\n", "").replace("\nChoose task:\n", ""));
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
           } else if (output.contains("PARTECIPANTS:") && output.contains("Choose partecipant:")) {
-            resultObject.setResult(output.replace("PARTECIPANTS:\n", "").replace("\nChoose partecipant: \n", ""));
+            resultObject.setResult(output.replace("PARTECIPANTS:\n", "").replace("\n\n Choose partecipant: \n \n", ""));
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
-          } else if (output.contains("No JSON file generated because there isn't a path to show")) {
+          } else if (output.contains("No JSON file generated because there isn't a path to show") || output.contains("SSSHARING IS PRESERVED") || output.contains("NOT RECOSTRUCTED") || output.contains("ENCRYPTION IS PRESERVED")) {
             resultObject.setResult("false");
             in.write(("N\n").getBytes());
             in.flush();
@@ -85,6 +85,10 @@ public class LeakDetectService {
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
           } else if (output.contains("No SSsharing PET over this model")) {
             resultObject.setResult("No SSsharing PET over this model");
+            process.destroy();
+            return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
+          } else if (output.contains("NO RECOSTRUCTION ACTION TASK IN THE MODEL")) {
+            resultObject.setResult("No reconstruction task in the model");
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
           } else if (output.contains("PATH") && output.contains("CONTINUE (Y/N)")) {
@@ -159,9 +163,11 @@ public class LeakDetectService {
             in.write((verificationType + "\n").getBytes());
             in.flush();
           } else if (output.contains("All task in the model:") && output.contains("Choose task:")) {
+            System.out.println(analysisTarget);
             in.write((analysisTarget + "\n").getBytes());
             in.flush();
           } else if (output.contains("PARTECIPANTS:") && output.contains("Choose partecipant:")) {
+            System.out.println(analysisTarget);
             in.write((analysisTarget + "\n").getBytes());
             in.flush();
           } else if (output.contains("All data in the model") && output.contains("Choose data (, in the middle):")) {
@@ -236,12 +242,15 @@ public class LeakDetectService {
             in.write((verificationType + "\n").getBytes());
             in.flush();
           } else if (output.contains("All task in the model:") && output.contains("Choose task:")) {
+            System.out.println(analysisTarget);
             in.write((analysisTarget + "\n").getBytes());
             in.flush();
           } else if (output.contains("PARTECIPANTS:") && output.contains("Choose partecipant:")) {
+            System.out.println(analysisTarget);
             in.write((analysisTarget + "\n").getBytes());
             in.flush();
           } else if (output.contains("All data in the model") && output.contains("Choose data (, in the middle):")) {
+            System.out.println(analysisFinalTargets);
             in.write((analysisFinalTargets + "\n").getBytes());
             in.flush();
           } else if (output.contains("NEVER HAS THIS NUMBER OF PARAMETERS")) {
