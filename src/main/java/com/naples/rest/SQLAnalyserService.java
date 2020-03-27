@@ -416,7 +416,7 @@ public class SQLAnalyserService {
       s3.write(str2);
       s3.close();
       
-      String command = "../sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation --connection dbname=ga_propagation --leak-mode if-exists -o " + 
+      String command = "../pleak-sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation --connection dbname=ga_propagation --leak-mode if-exists -o " + 
       "output.att " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att " + 
       analyser_files + schemasFileID + ".sql " + analyser_files + outputSchemaEmptyFileID + ".sql";
 
