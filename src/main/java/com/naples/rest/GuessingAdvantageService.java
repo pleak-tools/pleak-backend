@@ -62,16 +62,14 @@ public class GuessingAdvantageService {
     resultObject.tableConstraints = new HashMap<String, String>();
     String commandError = "";
 
-    String url = "jdbc:postgresql://localhost/banach";
-    //String url = "jdbc:postgresql://localhost/ga_propagation";
-    //String user = "ga_propagation";
-    //String password = "ceec4eif7ya";
+    String url = "jdbc:postgresql://localhost/ga_propagation";
+    String user = "ga_propagation";
+    String password = "ceec4eif7ya";
 
     String[][] intermediates = object.getIntermediates();
     String listTablesQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';";
 
-    //try (Connection con = DriverManager.getConnection(url, user, password); Statement st = con.createStatement();) {
-    try (Connection con = DriverManager.getConnection(url); Statement st = con.createStatement();) {
+    try (Connection con = DriverManager.getConnection(url, user, password); Statement st = con.createStatement();) {
       ResultSet rs = st.executeQuery(listTablesQuery);
       while (rs.next()) {
         System.out.println("DROP " + rs.getString(1));
@@ -104,8 +102,7 @@ public class GuessingAdvantageService {
 
       Map<String, List<String>> typesInTable = new HashMap<String, List<String>>();
 
-      //try (Connection con = DriverManager.getConnection(url, user, password); Statement st = con.createStatement();) {
-      try (Connection con = DriverManager.getConnection(url); Statement st = con.createStatement();) {
+      try (Connection con = DriverManager.getConnection(url, user, password); Statement st = con.createStatement();) {
         if (propagationQueries[i].startsWith("create table") || propagationQueries[i].startsWith("CREATE TABLE")) {
           st.executeUpdate(propagationQueries[i]);
           String currentCrerateTableName = propagationQueries[i].substring(13).split(" ")[0];
@@ -257,9 +254,13 @@ public class GuessingAdvantageService {
       s3.close();
 
       //String command = "../pleak-sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation --connection dbname=ga_propagation --leak-mode if-exists -o "
-      String command = "../pleak-sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation --connection dbname=banach --leak-mode always -o "
-          + "output.att " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att "
-          + analyser_files + schemasFileID + ".sql " + analyser_files + outputSchemaEmptyFileID + ".sql";
+      //    + "output.att " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att "
+      //    + analyser_files + schemasFileID + ".sql " + analyser_files + outputSchemaEmptyFileID + ".sql";
+
+      String [] command = new String [] {"../pleak-sql-constraint-propagation/dist/build/sql-constraint-propagation/sql-constraint-propagation", "--connection", "host=localhost dbname=ga_propagation user=ga_propagation password=ceec4eif7ya",
+          "--leak-mode", "always", "-o", "output.att",
+          analyser_files + queriesFileID + ".sql", analyser_files + attackerSettingsFileID + ".att",
+          analyser_files + schemasFileID + ".sql", analyser_files + outputSchemaEmptyFileID + ".sql"};
 
       Process p;
       p = Runtime.getRuntime().exec(command);
