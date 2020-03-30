@@ -1,4 +1,4 @@
-# Welcome
+# Pleak backend
 This is a new and improved repository for pleak-backend that uses:
 - [Maven](https://maven.apache.org/)
 - [Tomcat](http://tomcat.apache.org/)
@@ -186,6 +186,9 @@ Deletes file.
 
 ##GET /rest/directories/files/public/{uri}
 Returns public file.
+
+
+There are also REST endpoints for different Pleak analysers.
 
 
 ## License
