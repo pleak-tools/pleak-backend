@@ -12,6 +12,8 @@ This is a new and improved repository for pleak-backend that uses:
 - Maven 3.0+
 - MySQL 5.5+
 
+- PostgreSQL installed and database + user (named 'ga_propagation') created, following instructions in [pleak-sql-constraint-propagation](https://github.com/pleak-tools/pleak-sql-constraint-propagation) repository. This is required for [pleak-guessing-advantage-editor](https://github.com/pleak-tools/pleak-guessing-advantage-editor).
+
 ## Install Maven
 ```sudo apt-get install maven```
 
