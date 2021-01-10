@@ -178,12 +178,13 @@ public class SensitivitiesService {
         String epsilon = "--epsilon " + Float.parseFloat(object.getEpsilon());
 
         String errorUB = (Float.parseFloat(object.getErrorUB()) > 0) ? "--errorUB " + object.getErrorUB() : ""; // 0.9
+        String dpDelta = (Float.parseFloat(object.getDpDelta()) > 0) ? "--delta " + object.getDpDelta() : "";
         String sigmoidBeta = (Float.parseFloat(object.getSigmoidBeta()) > 0) ? "--sigmoid-beta " + object.getSigmoidBeta() : ""; // 0.01
         String sigmoidPrecision = (Float.parseFloat(object.getSigmoidPrecision()) > 0) ? "--sigmoid-precision " + object.getSigmoidPrecision() : ""; // 5.0
         String dateStyle = (!object.getDateStyle().toString().equals("-1")) ? "--datestyle " + object.getDateStyle() : ""; // European
 
         // Command for SQL derivative sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
-        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + epsilon + " " + beta + " " + errorUB + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
+        String command = analyser + "banach -QDa --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + epsilon + " " + beta + " " + errorUB + " " + dpDelta + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
 
         try {
 
@@ -334,12 +335,13 @@ public class SensitivitiesService {
         String local = "--localsenspath=../pleak-sql-analysis/banach/";
 
         String errorUB = (Float.parseFloat(object.getErrorUB()) > 0) ? "--errorUB " + object.getErrorUB() : ""; // 0.9
+        String dpDelta = (Float.parseFloat(object.getDpDelta()) > 0) ? "--delta " + object.getDpDelta() : "";
         String sigmoidBeta = (Float.parseFloat(object.getSigmoidBeta()) > 0) ? "--sigmoid-beta " + object.getSigmoidBeta() : ""; // 0.01
         String sigmoidPrecision = (Float.parseFloat(object.getSigmoidPrecision()) > 0) ? "--sigmoid-precision " + object.getSigmoidPrecision() : ""; // 5.0
         String dateStyle = (!object.getDateStyle().toString().equals("-1")) ? "--datestyle " + object.getDateStyle() : ""; // European
 
         // Command for combined sensitivity analyser command-line tool to get sensitivities based on schemas, queries, nrm and db files
-        String command = analyser + "banach -QDca --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + local + " " + epsilon + " " + beta + " " + gdistance + " " + errorUB + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
+        String command = analyser + "banach -QDca --db-create-tables " + analyser_files + schemasFileID + ".sql " + analyser_files + queriesFileID + ".sql " + analyser_files + attackerSettingsFileID + ".att" + " " + local + " " + epsilon + " " + beta + " " + gdistance + " " + errorUB + " " + dpDelta + " " + sigmoidBeta + " " + sigmoidPrecision + " " + dateStyle + "";
 
         try {
 

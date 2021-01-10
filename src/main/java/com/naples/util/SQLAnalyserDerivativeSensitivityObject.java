@@ -11,6 +11,7 @@ public class SQLAnalyserDerivativeSensitivityObject {
   String epsilon;
   String beta;
   String errorUB;
+  String dpDelta;
   String sigmoidBeta;
   String sigmoidPrecision;
   String dateStyle;
@@ -69,6 +70,14 @@ public class SQLAnalyserDerivativeSensitivityObject {
 
   public void setErrorUB(String errorUB) {
     this.errorUB = errorUB;
+  }
+
+  public String getDpDelta() {
+    return this.dpDelta;
+  }
+
+  public void setDpDelta(String dpDelta) {
+    this.dpDelta = dpDelta;
   }
 
   public String getSigmoidBeta() {
