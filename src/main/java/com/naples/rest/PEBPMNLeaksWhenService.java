@@ -76,25 +76,25 @@ public class PEBPMNLeaksWhenService {
           int n = out.read(buffer, 0, Math.min(no, buffer.length));
           String output = new String(buffer, 0, n);
           System.out.println(output);
-          if (output.contains("Insert file name")) {
+          if (output.contains("Insert file path")) {
             in.write((modelPath + "\n").getBytes());
             in.flush();
-          } else if (output.contains("Select action:")) {
+          } else if (output.contains("Select action:") && !output.contains("No JSON file generated because there isn't a path to show") && !output.contains("PATH :") && !output.contains("NO VIOLATION OCCURED") && !output.contains("Secret ALWAYS reconstructed") && !output.contains("Parallelism PRESERVED") && !output.contains("NO RECOSTRUCTION TASK") && !output.contains("No MPC task") && !output.contains("NO DEADLOCK")) {
             in.write((verificationType + "\n").getBytes());
             in.flush();
-          } else if (output.contains("All task in the model:") && output.contains("Choose task:")) {
-            resultObject.setResult(output.replace("All task in the model:\n", "").replace("\n\n Choose task: \n\n", "")
-                .replace("\nChoose task: \n\n", "").replace("\nChoose task:\n", ""));
+          } else if (output.contains("All tasks in the model:") && output.contains("Select task:")) {
+            resultObject.setResult(output.replace("All tasks in the model:\n", "").replace("\n\n Select task: \n\n", "")
+                .replace("\nSelect task: \n\n", "").replace("\nSelect task:\n", ""));
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
-          } else if (output.contains("PARTECIPANTS:") && output.contains("Choose partecipant:")) {
-            resultObject.setResult(output.replace("PARTECIPANTS:\n", "").replace("\n\n Choose partecipant: \n \n", ""));
+          } else if (output.contains("PARTECIPANTS:") && output.contains("Select partecipant:")) {
+            resultObject.setResult(output.replace("PARTECIPANTS:\n", "").replace("\n\nSelect partecipant:\n", ""));
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
-          } else if (output.contains("No JSON file generated because there isn't a path to show")
-              || output.contains("SSSHARING IS PRESERVED") || output.contains("NOT RECOSTRUCTED")
+          } else if (output.contains("false") || output.contains("No JSON file generated because there isn't a path to show") || output.contains("does NOT contain the selected data")
+              || output.contains("NO VIOLATION OCCURED") || output.contains("NOT RECOSTRUCTED")
               || output.contains("ENCRYPTION IS PRESERVED")) {
             resultObject.setResult("false");
-            in.write(("N\n").getBytes());
+            in.write(("7\n").getBytes());
             in.flush();
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
@@ -102,15 +102,30 @@ public class PEBPMNLeaksWhenService {
             resultObject.setResult("No SSsharing PET over this model");
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
-          } else if (output.contains("NO RECOSTRUCTION ACTION TASK IN THE MODEL")) {
+          } else if (output.contains("NO RECOSTRUCTION TASK")) {
             resultObject.setResult("No reconstruction task in the model");
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
-          } else if (output.contains("PATH") && output.contains("CONTINUE (Y/N)")) {
-            resultObject
-                .setResult(output.replace("\nCONTINUE (Y/N) :", "").replace("true\n", "").replace("PATH : ", ""));
-            in.write(("N\n").getBytes());
+          } else if (output.contains("No MPC task")) {
+            resultObject.setResult("No MPC task in the model");
+            process.destroy();
+            return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
+          } else if (output.contains("NO DEADLOCK")) {
+            resultObject.setResult("No deadlock");
+            process.destroy();
+            return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
+          } else if (output.contains("PATH :")) {
+            resultObject.setResult(output.replace("true\n", "").replace("PATH : ", "").split("Select action")[0]);
+            in.write(("7\n").getBytes());
             in.flush();
+            process.destroy();
+            return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
+          } else if (output.contains("Secret ALWAYS reconstructed")) {
+            resultObject.setResult("Secret ALWAYS reconstructed");
+            process.destroy();
+            return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
+          } else if (output.contains("Parallelism PRESERVED")) {
+            resultObject.setResult("Parallelism PRESERVED");
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
           }
@@ -172,23 +187,24 @@ public class PEBPMNLeaksWhenService {
           int n = out.read(buffer, 0, Math.min(no, buffer.length));
           String output = new String(buffer, 0, n);
           System.out.println(output);
-          if (output.contains("Insert file name")) {
+          if (output.contains("Insert file path")) {
+            System.out.println(modelPath);
             in.write((modelPath + "\n").getBytes());
             in.flush();
-          } else if (output.contains("Select action:")) {
+          } else if (output.contains("Select action:") && !output.contains("No JSON file generated because there isn't a path to show") && !output.contains("PATH :")) {
             in.write((verificationType + "\n").getBytes());
             in.flush();
-          } else if (output.contains("All task in the model:") && output.contains("Choose task:")) {
+          } else if (output.contains("All tasks in the model:") && output.contains("Select task:")) {
             System.out.println(analysisTarget);
             in.write((analysisTarget + "\n").getBytes());
             in.flush();
-          } else if (output.contains("PARTECIPANTS:") && output.contains("Choose partecipant:")) {
+          } else if (output.contains("PARTECIPANTS:") && output.contains("Select partecipant:")) {
             System.out.println(analysisTarget);
             in.write((analysisTarget + "\n").getBytes());
             in.flush();
-          } else if (output.contains("All data in the model") && output.contains("Choose data (, in the middle):")) {
+          } else if (output.contains("All data object in the model:") && output.contains("Select data object(use \",\" to select more than one data object):")) {
             resultObject.setResult(
-                output.replace("All data in the model ", "").replace("\n\nChoose data (, in the middle):", ""));
+                output.replace("\nAll data object in the model: \n", "").replace("All data object in the model: \n", "").replace("\nSelect data object(use \",\" to select more than one data object):", "").replace("\n \n", ""));
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
           }
@@ -252,40 +268,40 @@ public class PEBPMNLeaksWhenService {
           int n = out.read(buffer, 0, Math.min(no, buffer.length));
           String output = new String(buffer, 0, n);
           System.out.println(output);
-          if (output.contains("Insert file name")) {
+          if (output.contains("Insert file path")) {
+            System.out.println(modelPath);
             in.write((modelPath + "\n").getBytes());
             in.flush();
-          } else if (output.contains("Select action:")) {
+          } else if (output.contains("Select action:") && !output.contains("No JSON file generated because there isn't a path to show") && !output.contains("PATH :") && !output.contains("does NOT contain the selected data")) {
             in.write((verificationType + "\n").getBytes());
             in.flush();
-          } else if (output.contains("All task in the model:") && output.contains("Choose task:")) {
+          } else if (output.contains("All tasks in the model:") && output.contains("Select task:")) {
             System.out.println(analysisTarget);
             in.write((analysisTarget + "\n").getBytes());
             in.flush();
-          } else if (output.contains("PARTECIPANTS:") && output.contains("Choose partecipant:")) {
+          } else if (output.contains("PARTECIPANTS:") && output.contains("Select partecipant:")) {
             System.out.println(analysisTarget);
             in.write((analysisTarget + "\n").getBytes());
             in.flush();
-          } else if (output.contains("All data in the model") && output.contains("Choose data (, in the middle):")) {
+          } else if (output.contains("All data object in the model:") && output.contains("Select data object(use \",\" to select more than one data object):")) {
             System.out.println(analysisFinalTargets);
             in.write((analysisFinalTargets + "\n").getBytes());
             in.flush();
           } else if (output.contains("NEVER HAS THIS NUMBER OF PARAMETERS")) {
             resultObject.setResult("NEVER HAS THIS NUMBER OF PARAMETERS");
-            in.write(("N\n").getBytes());
+            in.write(("7\n").getBytes());
             in.flush();
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
-          } else if (output.contains("No JSON file generated because there isn't a path to show")) {
+          } else if (output.contains("false") || output.contains("No JSON file generated because there isn't a path to show") || output.contains("does NOT contain the selected data")) {
             resultObject.setResult("false");
-            in.write(("N\n").getBytes());
+            in.write(("7\n").getBytes());
             in.flush();
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
-          } else if (output.contains("PATH") && output.contains("CONTINUE (Y/N)")) {
-            resultObject
-                .setResult(output.replace("\nCONTINUE (Y/N) :", "").replace("true\n", "").replace("PATH : ", ""));
-            in.write(("N\n").getBytes());
+          } else if (output.contains("PATH :")) {
+            resultObject.setResult(output.replace("true\n", "").replace("PATH : ", "").split("Select action")[0]);
+            in.write(("7\n").getBytes());
             in.flush();
             process.destroy();
             return Response.ok(resultObject).type(MediaType.APPLICATION_JSON).build();
