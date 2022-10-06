@@ -78,7 +78,7 @@ Automated tests
 
 # API
 
-##POST /rest/directories
+## POST /rest/directories
 
 ```
 {
@@ -96,16 +96,16 @@ Creates a new directory with parent as
 
 and returns the directory.
 
-##GET /rest/directories/root
+## GET /rest/directories/root
 Returns root directory.
 
-##GET /rest/directories/share
+## GET /rest/directories/share
 Returns share directory.
 
-##GET /rest/directories/{id}
+## GET /rest/directories/{id}
 Returns directory.
 
-##PUT /rest/directories/{id}
+## PUT /rest/directories/{id}
 
 ```
 {
@@ -130,10 +130,10 @@ Returns directory.
 
 Updates (or creates a new) directory and returns it. The permission object can have ```action.title = 'view'``` or ```action.title = 'edit'```.
 
-##DELETE /rest/directories/{id}
+## DELETE /rest/directories/{id}
 Deletes directory.
 
-##POST /rest/directories/files/
+## POST /rest/directories/files/
 
 ```
 {
@@ -149,10 +149,10 @@ Creates a new file and returns it. Also inherits permissions from parent directo
 - root when ```directory.title = 'root'```
 - specific directory when ```directory.id``` has a value of an existing directory ```id``` (which can also be root).
 
-##GET /rest/directories/files/{id}
+## GET /rest/directories/files/{id}
 Returns file.
 
-##PUT /rest/directories/files/{id}
+## PUT /rest/directories/files/{id}
 
 ```
 {
@@ -183,10 +183,10 @@ Updates and returns file. Also inherits permissions from parent directory where 
 
 Creates a public URI for file when ```file.published = true``` or deletes the public URI when ```file.published = false```. Updates file contents when server-side ```file.md5Hash``` matches with supplied ```file.md5Hash``` and creates a new ```file.md5Hash```.
 
-##DELETE /rest/directories/files/{id}
+## DELETE /rest/directories/files/{id}
 Deletes file.
 
-##GET /rest/directories/files/public/{uri}
+## GET /rest/directories/files/public/{uri}
 Returns public file.
 
 
